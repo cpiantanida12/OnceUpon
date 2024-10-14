@@ -1,21 +1,45 @@
 import React, { useState } from 'react';
 import { StyleSheet, View, Image, Text, TextInput, TouchableOpacity, Alert } from 'react-native';
 import { Link, useRouter } from 'expo-router';
+import { useUser } from '../UserContext';
 
 const LoginPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const router = useRouter();
+  const { setUserID } = useUser();
 
-  const handleLogin = () => {
+  const handleLogin = async () => {
     if (!email || !password) {
       Alert.alert('Invalid Input', 'Please enter both email and password.');
       return;
     }
 
-    console.log('Logged in with:', { email, password });
-    // Navigate to the next screen after successful login
-    router.replace('/browse');
+    try {
+      const response = await fetch('http://10.0.2.2:5000/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email: email,
+          password: password,
+        }),
+      });
+  
+      const data = await response.json();
+  
+      if (response.ok) {
+        console.log('userID:', data._id);
+        setUserID(data._id);
+        router.replace('/browse');
+      } else {
+        Alert.alert('Login Failed', data.error || 'Invalid email or password.');
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      Alert.alert('Error', 'An error occurred while connecting to the server.');
+    }
   };
 
   return (

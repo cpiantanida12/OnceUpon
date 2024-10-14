@@ -12,7 +12,7 @@ const SignUpPage = () => {
       return re.test(String(email).toLowerCase());
     };
   
-    const handleCreateAccount = () => {
+    const handleCreateAccount = async () => {
       if (!validateEmail(email)) {
         Alert.alert('Invalid Email', 'Please enter a valid email address.');
         return;
@@ -21,12 +21,33 @@ const SignUpPage = () => {
         Alert.alert('Weak Password', 'Password must be at least 6 characters long.');
         return;
       }
-      
-      // Handle account creation logic here
-      console.log('Account created with:', { email, password });
-      
-      // Navigate to the login page
-      router.push('/login');
+    
+      try {
+        const response = await fetch('http://10.0.2.2:5000/signup', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            email: email,
+            password: password,
+          }),
+        });
+    
+        const data = await response.json();
+    
+        if (response.ok) {
+          // Handle successful account creation
+          Alert.alert('Success', 'Account created successfully!');
+          router.push('/login');
+        } else {
+          // Handle errors returned from the server
+          Alert.alert('Error', data.error || 'An error occurred during account creation.');
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        Alert.alert('Error', 'An error occurred while connecting to the server.');
+      }
     };
 
   return (
@@ -74,6 +95,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#EFF8FE',
     padding: 10,
+    marginTop: 40,
   },
   logo: {
     width: 100,

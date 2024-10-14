@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { StyleSheet, View, Text, Button, TouchableOpacity } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
+import useHistory from './useHistory'; 
+
 // import { useSearchParams } from 'expo-router';
 
 
@@ -42,32 +44,33 @@ import { Ionicons } from '@expo/vector-icons';
 //   return { history, goBack };
 // };
 
-const getQueryParams = () => {
-    const search = window.location.search;
-    console.log("Search:", search)
-    const params = new URLSearchParams(search);
-    return Object.fromEntries(params.entries());
-  };
+// const getQueryParams = () => {
+//     const search = window.location.search;
+//     console.log("Search:", search)
+//     const params = new URLSearchParams(search);
+//     return Object.fromEntries(params.entries());
+//   };
 
-  const { from } = getQueryParams();
+//   const { from } = getQueryParams();
 
-  const handleBack = () => {
-    if (from === 'build') {
-      router.push('/build');
-    } else {
-      router.back();
-    }
-  };
+//   const handleBack = () => {
+//     if (from === 'build') {
+//       router.push('/build');
+//     } else {
+//       router.back();
+//     }
+//   };
 
 const StoryScreen = () => {
-  const { goBack } = getQueryParams();
+//   const { goBack } = getQueryParams();
+  //const { goBack } = useHistory();
 
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <TouchableOpacity onPress={goBack} style={styles.backButton}>
+        {/* <TouchableOpacity onPress={goBack} style={styles.backButton}>
           <Ionicons name="arrow-back" size={24} color="black" />
-        </TouchableOpacity>
+        </TouchableOpacity> */}
         <Text style={styles.headerText}>Story</Text>
       </View>
       <Text style={styles.title}>This is the story that you generated. I hope you like it. This is obviously just a placeholder lmao.</Text>
