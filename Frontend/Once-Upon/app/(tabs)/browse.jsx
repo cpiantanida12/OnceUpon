@@ -31,7 +31,7 @@ const books = [
   {
     id: 2,
     title: "Luna and the Midnight Garden",
-    theme: "Teamwork",
+    theme: "Teamwork, Problem-Solving",
     image: require("../../assets/images/browse-page-images/luna_midnight.jpg"),
     summary:
       "Luna, a curious fox cub, hears a rumor about a hidden garden that only appears under the light of the full moon. Eager to explore, she sneaks out at night and stumbles upon strange glowing plants and mysterious puzzles guarding the garden’s secrets. Along the way, Luna meets an owl, a hedgehog, and a firefly, each with unique skills to help her on her journey. But as they work together, Luna realizes the garden may hold more than just mysteries—perhaps even the answers to questions she didn't know she had. What wonders await Luna beneath the midnight sky?",
@@ -47,7 +47,7 @@ const books = [
   {
     id: 4,
     title: "The River of Echoes",
-    theme: "Teamwork",
+    theme: "Teamwork, Self-Discovery",
     image: require("../../assets/images/browse-page-images/river_echoes.jpg"),
     summary:
       "Kai, a timid otter, hears tales about the River of Echoes—a place where voices from the past can be heard, guiding those brave enough to listen. When his village faces a problem that no one can solve, Kai decides to find the river and uncover its wisdom. Along the journey, Kai navigates rushing currents, eerie caves, and strange echoes that seem to know his fears. With each challenge, he grows a little stronger, but will he find the courage to face the biggest obstacle of all—believing in himself? What secrets will the river reveal to Kai?",
@@ -55,7 +55,7 @@ const books = [
   {
     id: 5,
     title: "The Great Science Fair Caper",
-    theme: "Teamwork",
+    theme: "Teamwork, Problem-Solving",
     image: require("../../assets/images/browse-page-images/science-fair.jpg"),
     summary:
       "At Lincoln Middle School, the annual science fair is the highlight of the year, and everyone is excited to showcase their projects. When someone sabotages the fair, causing chaos and confusion, a group of misfit friends bands together to solve the mystery. Using their unique talents—like coding, engineering, and chemistry—they unravel clues and uncover the culprit behind the sabotage. Through teamwork and creative thinking, they not only save the fair but also learn the importance of collaboration and believing in themselves. Can they turn the chaos into the greatest science fair ever?",
@@ -63,7 +63,7 @@ const books = [
   {
     id: 6,
     title: "The Great Balloon Race",
-    theme: "Adventure",
+    theme: "Friendship, Adventure",
     image: require("../../assets/images/browse-page-images/new-balloonrace.jpg"),
     summary:
       "In the vibrant town of Breezyville, the annual Great Balloon Race is the highlight of the year. Eleven-year-old Mia teams up with her shy neighbor, Alex, a brilliant inventor but lacking confidence, to create a stunning balloon octopus. When a sudden storm sweeps them away during the race, they find themselves navigating strange lands filled with talking animals and whimsical creatures. As they work together to find their way back home, Mia and Alex learn valuable lessons about friendship, perseverance, and believing in themselves.",
@@ -79,7 +79,7 @@ const books = [
   {
     id: 8,
     title: "Charlie and the Whispering Woods",
-    theme: "Adventure",
+    theme: "Friendship, Adventure",
     image: require("../../assets/images/browse-page-images/new-whisperingwoods.jpg"),
     summary:
       "During a camping trip with his class, Charlie gets separated from the group and finds himself lost in a part of the forest no one has ever explored. Strange whispers echo through the trees, and glowing footprints lead him deeper into the woods. Charlie soon meets creatures who seem both helpful and mischievous, and he must figure out who to trust if he wants to find his way back. Will Charlie make it out before nightfall, or will the forest’s secrets keep him forever?",
@@ -135,7 +135,7 @@ const books = [
   {
     id: 14,
     title: "The Great Balloon Race",
-    theme: "Friendship",
+    theme: "Friendship, Adventure",
     image: require("../../assets/images/browse-page-images/new-balloonrace.jpg"),
     summary:
       "In the vibrant town of Breezyville, the annual Great Balloon Race is the highlight of the year. Eleven-year-old Mia teams up with her shy neighbor, Alex, a brilliant inventor but lacking confidence, to create a stunning balloon octopus. When a sudden storm sweeps them away during the race, they find themselves navigating strange lands filled with talking animals and whimsical creatures. As they work together to find their way back home, Mia and Alex learn valuable lessons about friendship, perseverance, and believing in themselves.",
@@ -143,7 +143,7 @@ const books = [
   {
     id: 15,
     title: "Charlie and the Whispering Woods",
-    theme: "Friendship",
+    theme: "Friendship, Adventure",
     image: require("../../assets/images/browse-page-images/new-whisperingwoods.jpg"),
     summary:
       "During a camping trip with his class, Charlie gets separated from the group and finds himself lost in a part of the forest no one has ever explored. Strange whispers echo through the trees, and glowing footprints lead him deeper into the woods. Charlie soon meets creatures who seem both helpful and mischievous, and he must figure out who to trust if he wants to find his way back. Will Charlie make it out before nightfall, or will the forest’s secrets keep him forever?",
@@ -175,7 +175,7 @@ const books = [
   {
     id: 19,
     title: "The River of Echoes",
-    theme: "Self-Discovery",
+    theme: "Teamwork, Self-Discovery",
     image: require("../../assets/images/browse-page-images/river_echoes.jpg"),
     summary:
       "Kai, a timid otter, hears tales about the River of Echoes—a place where voices from the past can be heard, guiding those brave enough to listen. When his village faces a problem that no one can solve, Kai decides to find the river and uncover its wisdom. Along the journey, Kai navigates rushing currents, eerie caves, and strange echoes that seem to know his fears. With each challenge, he grows a little stronger, but will he find the courage to face the biggest obstacle of all—believing in himself? What secrets will the river reveal to Kai?",
@@ -215,7 +215,7 @@ const books = [
   {
     id: 24,
     title: "Luna and the Midnight Garden",
-    theme: "Problem-Solving",
+    theme: "Teamwork, Problem-Solving",
     image: require("../../assets/images/browse-page-images/luna_midnight.jpg"),
     summary:
       "Luna, a curious fox cub, hears a rumor about a hidden garden that only appears under the light of the full moon. Eager to explore, she sneaks out at night and stumbles upon strange glowing plants and mysterious puzzles guarding the garden’s secrets. Along the way, Luna meets an owl, a hedgehog, and a firefly, each with unique skills to help her on her journey. But as they work together, Luna realizes the garden may hold more than just mysteries—perhaps even the answers to questions she didn't know she had. What wonders await Luna beneath the midnight sky?",
@@ -223,7 +223,7 @@ const books = [
   {
     id: 25,
     title: "The Great Science Fair Caper",
-    theme: "Problem-Solving",
+    theme: "Teamwork, Problem-Solving",
     image: require("../../assets/images/browse-page-images/science-fair.jpg"),
     summary:
       "At Lincoln Middle School, the annual science fair is the highlight of the year, and everyone is excited to showcase their projects. When someone sabotages the fair, causing chaos and confusion, a group of misfit friends bands together to solve the mystery. Using their unique talents—like coding, engineering, and chemistry—they unravel clues and uncover the culprit behind the sabotage. Through teamwork and creative thinking, they not only save the fair but also learn the importance of collaboration and believing in themselves. Can they turn the chaos into the greatest science fair ever?",
