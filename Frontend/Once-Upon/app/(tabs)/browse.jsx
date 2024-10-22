@@ -31,7 +31,7 @@ const books = [
   {
     id: 2,
     title: "Luna and the Midnight Garden",
-    theme: "Teamwork, Problem-Solving",
+    theme: "Teamwork",
     image: require("../../assets/images/browse-page-images/luna_midnight.jpg"),
     summary:
       "Luna, a curious fox cub, hears a rumor about a hidden garden that only appears under the light of the full moon. Eager to explore, she sneaks out at night and stumbles upon strange glowing plants and mysterious puzzles guarding the garden’s secrets. Along the way, Luna meets an owl, a hedgehog, and a firefly, each with unique skills to help her on her journey. But as they work together, Luna realizes the garden may hold more than just mysteries—perhaps even the answers to questions she didn't know she had. What wonders await Luna beneath the midnight sky?",
@@ -47,23 +47,23 @@ const books = [
   {
     id: 4,
     title: "The River of Echoes",
-    theme: "Teamwork, Self-Discovery",
+    theme: "Teamwork",
     image: require("../../assets/images/browse-page-images/river_echoes.jpg"),
     summary:
       "Kai, a timid otter, hears tales about the River of Echoes—a place where voices from the past can be heard, guiding those brave enough to listen. When his village faces a problem that no one can solve, Kai decides to find the river and uncover its wisdom. Along the journey, Kai navigates rushing currents, eerie caves, and strange echoes that seem to know his fears. With each challenge, he grows a little stronger, but will he find the courage to face the biggest obstacle of all—believing in himself? What secrets will the river reveal to Kai?",
   },
   {
     id: 5,
-    title: "The Great Science Fair Caper",
-    theme: "Teamwork, Problem-Solving",
-    image: require("../../assets/images/browse-page-images/science-fair.jpg"),
+    title: "Operation: Dragon Egg",
+    theme: "Teamwork",
+    image: require("../../assets/images/browse-page-images/dragon_egg.jpg"),
     summary:
-      "At Lincoln Middle School, the annual science fair is the highlight of the year, and everyone is excited to showcase their projects. When someone sabotages the fair, causing chaos and confusion, a group of misfit friends bands together to solve the mystery. Using their unique talents—like coding, engineering, and chemistry—they unravel clues and uncover the culprit behind the sabotage. Through teamwork and creative thinking, they not only save the fair but also learn the importance of collaboration and believing in themselves. Can they turn the chaos into the greatest science fair ever?",
+      "During a school camping trip, a group of kids stumbles upon what looks like a glowing dragon egg deep in the forest. When they realize the egg is slowly cracking open, they decide they need to return it to the mysterious creature’s nest before nightfall. Each kid brings a unique skill—Jasper knows survival tricks, Priya is great with maps, and Leo keeps everyone calm under pressure. As they face tricky trails, puzzles, and unexpected obstacles, the group learns that only by combining their talents and trusting one another can they complete their mission before the egg hatches."
   },
   {
     id: 6,
     title: "The Great Balloon Race",
-    theme: "Friendship, Adventure",
+    theme: "Adventure",
     image: require("../../assets/images/browse-page-images/new-balloonrace.jpg"),
     summary:
       "In the vibrant town of Breezyville, the annual Great Balloon Race is the highlight of the year. Eleven-year-old Mia teams up with her shy neighbor, Alex, a brilliant inventor but lacking confidence, to create a stunning balloon octopus. When a sudden storm sweeps them away during the race, they find themselves navigating strange lands filled with talking animals and whimsical creatures. As they work together to find their way back home, Mia and Alex learn valuable lessons about friendship, perseverance, and believing in themselves.",
@@ -79,7 +79,7 @@ const books = [
   {
     id: 8,
     title: "Charlie and the Whispering Woods",
-    theme: "Friendship, Adventure",
+    theme: "Adventure",
     image: require("../../assets/images/browse-page-images/new-whisperingwoods.jpg"),
     summary:
       "During a camping trip with his class, Charlie gets separated from the group and finds himself lost in a part of the forest no one has ever explored. Strange whispers echo through the trees, and glowing footprints lead him deeper into the woods. Charlie soon meets creatures who seem both helpful and mischievous, and he must figure out who to trust if he wants to find his way back. Will Charlie make it out before nightfall, or will the forest’s secrets keep him forever?",
@@ -99,14 +99,6 @@ const books = [
     image: require("../../assets/images/browse-page-images/new-bubbles.jpg"),
     summary:
       "In the vibrant town of Chromaville, colors bring joy and creativity to everyone’s lives. One day, the colors start to disappear, and the town becomes dull and gray. A young girl named Pippa discovers that a mischievous creature known as the Color Thief is stealing the colors for himself. With the help of her friends, Pippa embarks on a quest to retrieve the stolen colors. Along the way, they learn about the beauty of diversity, how different colors represent different ideas, and the importance of community. Will they be able to stop the Color Thief and restore the town’s brightness?",
-  },
-  {
-    id: 10,
-    title: "Bubbles and the Deep Sea Mystery",
-    theme: "Adventure",
-    image: require("../../assets/images/browse-page-images/new-bubbles.jpg"),
-    summary:
-      "Bubbles, a curious young octopus, dreams of exploring the surface world. One day, she discovers a mysterious object washed up on the shore—a plastic bottle with a note inside. The note tells of a lost treasure hidden deep in the ocean, and Bubbles decides to embark on an adventure to find it. As she travels through vibrant coral reefs and encounters other sea creatures, she learns about the dangers of pollution and how it affects her home. With newfound friends and courage, Bubbles must solve clues and protect the ocean while searching for the treasure. Will she be able to make a difference and find the treasure before it’s too late?",
   },
   {
     id: 11,
@@ -134,17 +126,17 @@ const books = [
   },
   {
     id: 14,
-    title: "The Great Balloon Race",
-    theme: "Friendship, Adventure",
-    image: require("../../assets/images/browse-page-images/new-balloonrace.jpg"),
+    title: "The Invisible Friend",
+    theme: "Friendship",
+    image: require("../../assets/images/browse-page-images/invisible_friend.jpg"),
     summary:
       "In the vibrant town of Breezyville, the annual Great Balloon Race is the highlight of the year. Eleven-year-old Mia teams up with her shy neighbor, Alex, a brilliant inventor but lacking confidence, to create a stunning balloon octopus. When a sudden storm sweeps them away during the race, they find themselves navigating strange lands filled with talking animals and whimsical creatures. As they work together to find their way back home, Mia and Alex learn valuable lessons about friendship, perseverance, and believing in themselves.",
   },
   {
     id: 15,
-    title: "Charlie and the Whispering Woods",
-    theme: "Friendship, Adventure",
-    image: require("../../assets/images/browse-page-images/new-whisperingwoods.jpg"),
+    title: "The Bench in the Big Oak Tree",
+    theme: "Friendship",
+    image: require("../../assets/images/browse-page-images/bench_big_oak_tree.jpg"),
     summary:
       "During a camping trip with his class, Charlie gets separated from the group and finds himself lost in a part of the forest no one has ever explored. Strange whispers echo through the trees, and glowing footprints lead him deeper into the woods. Charlie soon meets creatures who seem both helpful and mischievous, and he must figure out who to trust if he wants to find his way back. Will Charlie make it out before nightfall, or will the forest’s secrets keep him forever?",
   },
@@ -174,11 +166,11 @@ const books = [
   },
   {
     id: 19,
-    title: "The River of Echoes",
-    theme: "Teamwork, Self-Discovery",
-    image: require("../../assets/images/browse-page-images/river_echoes.jpg"),
+    title: "The Lost Melody",
+    theme: "Self-Discovery",
+    image: require("../../assets/images/browse-page-images/lost_melody.jpg"),
     summary:
-      "Kai, a timid otter, hears tales about the River of Echoes—a place where voices from the past can be heard, guiding those brave enough to listen. When his village faces a problem that no one can solve, Kai decides to find the river and uncover its wisdom. Along the journey, Kai navigates rushing currents, eerie caves, and strange echoes that seem to know his fears. With each challenge, he grows a little stronger, but will he find the courage to face the biggest obstacle of all—believing in himself? What secrets will the river reveal to Kai?",
+      "Lila, a talented but shy violinist, loves playing music but only when no one is listening. When her school announces a talent show, Lila feels torn—she wants to share her music but fears performing in front of others. After discovering an old, forgotten song tucked inside her violin case, she embarks on a journey to learn its origin. Along the way, she meets inspiring musicians, each encouraging her to embrace her gift. As Lila pieces together the song’s story, she discovers not just the melody’s history but also the courage to play her own tune for the world.",
   },
   {
     id: 20,
@@ -198,7 +190,7 @@ const books = [
   },
   {
     id: 22,
-    title: "The Last Cookie on Earth",
+    title: "The Great Cookie Competiton",
     theme: "Problem-Solving",
     image: require("../../assets/images/browse-page-images/last-cookie-updated.jpg"),
     summary:
@@ -214,49 +206,22 @@ const books = [
   },
   {
     id: 24,
-    title: "Luna and the Midnight Garden",
-    theme: "Teamwork, Problem-Solving",
-    image: require("../../assets/images/browse-page-images/luna_midnight.jpg"),
+    title: "The Great Go-Kart Grand Prix",
+    theme: "Problem-Solving",
+    image: require("../../assets/images/browse-page-images/great_go_kart.jpg"),
     summary:
-      "Luna, a curious fox cub, hears a rumor about a hidden garden that only appears under the light of the full moon. Eager to explore, she sneaks out at night and stumbles upon strange glowing plants and mysterious puzzles guarding the garden’s secrets. Along the way, Luna meets an owl, a hedgehog, and a firefly, each with unique skills to help her on her journey. But as they work together, Luna realizes the garden may hold more than just mysteries—perhaps even the answers to questions she didn't know she had. What wonders await Luna beneath the midnight sky?",
+      "In the small town of Gearville, best friends Mia and Jake are excited to enter the Great Go-Kart Grand Prix with their homemade go-kart, but when they forget crucial supplies, they embark on a hilarious scavenger hunt around town. Gathering odd items from neighbors—a bicycle wheel from Mr. Thompson, a lawnmower engine from Mrs. Jenkins, and colorful pool noodles from the community pool—they face funny challenges, like convincing a grumpy neighbor to part with his lawnmower. On race day, with their quirky creation, they realize the true victory isn't about winning, but the fun and creativity they shared while building it.",
   },
   {
     id: 25,
-    title: "The Great Science Fair Caper",
-    theme: "Teamwork, Problem-Solving",
-    image: require("../../assets/images/browse-page-images/science-fair.jpg"),
+    title: "The Puzzle of the Painted Door ",
+    theme: "Problem-Solving",
+    image: require("../../assets/images/browse-page-images/puzzle_of_painted_door.jpg"),
     summary:
-      "At Lincoln Middle School, the annual science fair is the highlight of the year, and everyone is excited to showcase their projects. When someone sabotages the fair, causing chaos and confusion, a group of misfit friends bands together to solve the mystery. Using their unique talents—like coding, engineering, and chemistry—they unravel clues and uncover the culprit behind the sabotage. Through teamwork and creative thinking, they not only save the fair but also learn the importance of collaboration and believing in themselves. Can they turn the chaos into the greatest science fair ever?",
+      "When Maya discovers an old, colorful door in her attic, she is immediately drawn to it. However, it’s locked tight with no key in sight. Determined to uncover what lies behind the door, Maya enlists the help of her best friend, Sam. Together, they notice that the intricate patterns on the door resemble a series of puzzles scattered throughout their town. As they solve each puzzle—a riddle at the library, a math challenge at the park, and a treasure hunt in the town square—they uncover clues about the door’s origin. With each discovery, they learn to think outside the box and use their unique strengths. Will they finally unlock the door and reveal its secret, or will it remain a mystery forever?",
   },
 ];
 
-const images = [
-  require("../../assets/images/browse-page-images/zach-super-squad.jpg"),
-  require("../../assets/images/browse-page-images/luna_midnight.jpg"),
-  require("../../assets/images/browse-page-images/science-fair.jpg"),
-  require("../../assets/images/browse-page-images/river_echoes.jpg"),
-  require("../../assets/images/browse-page-images/new-homework.jpg"),
-  require("../../assets/images/browse-page-images/new-balloonrace.jpg"),
-  require("../../assets/images/browse-page-images/hidden-kingdom.jpg"),
-  require("../../assets/images/browse-page-images/new-whisperingwoods.jpg"),
-  require("../../assets/images/browse-page-images/color-thief.jpg"),
-  require("../../assets/images/browse-page-images/new-bubbles.jpg"),
-  require("../../assets/images/browse-page-images/new-timetravel.jpg"),
-  require("../../assets/images/browse-page-images/new-timejar.jpg"),
-  require("../../assets/images/browse-page-images/new-whisperingwoods.jpg"),
-  require("../../assets/images/browse-page-images/new-balloonrace.jpg"),
-  require("../../assets/images/browse-page-images/lost_feather.jpg"),
-  require("../../assets/images/browse-page-images/new-sneakers.jpg"),
-  require("../../assets/images/browse-page-images/new-stolen-stars.jpg"),
-  require("../../assets/images/browse-page-images/robot-dance.jpg"),
-  require("../../assets/images/browse-page-images/river_echoes.jpg"),
-  require("../../assets/images/browse-page-images/shadow-thief.jpg"),
-  require("../../assets/images/browse-page-images/new-missingbook.jpg"),
-  require("../../assets/images/browse-page-images/new-stolen-stars.jpg"),
-  require("../../assets/images/browse-page-images/secret-clubhouse.jpg"),
-  require("../../assets/images/browse-page-images/luna_midnight.jpg"),
-  require("../../assets/images/browse-page-images/science-fair.jpg"),
-];
 
 const BrowseScreen = () => {
   const [modalVisible, setModalVisible] = useState(false);
