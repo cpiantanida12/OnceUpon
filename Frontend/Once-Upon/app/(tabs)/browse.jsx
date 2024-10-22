@@ -112,7 +112,7 @@ const books = [
     id: 12,
     title: "The Trouble with Time Jars",
     theme: "Friendship",
-    image: require("../../assets/images/browse-page-images/color-thief.jpg"),
+    image: require("../../assets/images/browse-page-images/new-timejar.jpg"),
     summary:
       "While cleaning out her attic, Mia stumbles upon jars labeled with “extra time.” Each jar can give her an extra hour in the day, and Mia uses them to have fun, skip chores, and get out of homework. But soon, things get tricky when she realizes time doesn’t flow the same for everyone else. Mia must decide how to use the remaining jars wisely—before she runs out of time for the people and things that matter most. How will she fix the mess she’s made before it’s too late?",
   },
@@ -301,10 +301,15 @@ const styles = StyleSheet.create({
     height: 150,
     backgroundColor: "grey",
     marginRight: 10,
+    justifyContent: "center",
+    alignItems: "center",
+    overflow: "hidden",
+    borderRadius: 5,
   },
   bookImage: {
-    width: 100,
-    height: 150,
+    width: "150%",
+    height: "100%",
+    resizeMode: "cover",
   },
   modalContainer: {
     flex: 1,
