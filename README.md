@@ -3,6 +3,10 @@
 **Authors:** Hima Cheruvu, Nia Ganger, Christian Piantanida, Rishika Ravindran  
 **Institution:** Applied Data Science Program, University of Chicago
 
+<p align="center">
+  <img width="578" alt="Once Upon Logo with Slogan" src="https://github.com/user-attachments/assets/add556ee-99ab-4c2d-80b5-5b5cdb9ce375">
+</p>
+
 ## Abstract
 **Once Upon** is an interactive storytelling app that generates age-appropriate, personalized stories for children using AI-driven customization. Powered by **Gemini 1.0** and **LangChain**, the app crafts unique narratives that incorporate user-specific details like age, preferences, and familiar names. Key features include a **Browse Page** with themed stories, a **Custom Story Generation** option, and **Text-to-Speech (TTS)** for accessible, auditory storytelling.
 
@@ -23,6 +27,10 @@
 ### Project Motivation
 
 Ever come home after a long day, ready to unwind, only to hear, "Can you tell me a bedtime story?" Enter Once Upon—the bedtime companion that brings magical, personalized storytelling to your child. With custom stories crafted around their interests and a library of pre-made tales, Once Upon helps you create cozy, memorable moments without the extra effort.
+
+<p align="center">
+<img width="400" alt="mom using once upon" src="https://github.com/user-attachments/assets/f864d58d-a292-49f3-b386-f34e20246264">
+</p>
 
 ### App Overview
 Once Upon uses AI to deliver custom stories based on children’s age and interests. Users can choose between custom story generation, where children input their own ideas, and a library of pre-generated stories. Both options reduce screen time and make bedtime routines more interactive, with options to modify story summaries for a unique touch.
