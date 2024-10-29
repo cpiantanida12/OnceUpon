@@ -1,0 +1,17 @@
+flask
+flask_cors
+flask_jwt_extended
+bson
+werkzeug
+datetime
+dotenv
+pandas
+numpy
+torch
+transformers
+vertexai
+google-cloud-aiplatform==1.50.0
+google-api-core==2.19.0
+langchain==0.1.16
+langchain_community==0.0.34
+langchain-google-vertexai==1.0.1
