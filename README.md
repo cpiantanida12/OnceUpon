@@ -59,8 +59,14 @@ Once Upon uses AI to deliver custom stories based on children’s age and intere
 
 ### Results and Discussion
 
-- **Engagement Metrics:** High engagement seen with personalized, familiar story elements.
+- **Engagement Metrics:** We used the following engagement metrics and readability scores to ensure our stories meet standards for a particular age group-
+Flesch-Kincaid Grade Level: Shows the school grade level required to understand the text. Lower scores mean it’s easier to read.
+Gunning Fog Index: Estimates the years of education needed to easily read the text. Lower scores are simpler.
+Dale-Chall Score: Measures readability based on familiar words. Higher scores mean it’s harder to read.
+Flesch Reading Ease: Rates readability from 0–100. Higher scores mean it’s easier to read and suitable for a wider audience.
+
 - **Benefits of Personalization:** Customized stories improve interest and connection.
+  
 - **Challenges:** Balancing language complexity for different ages, narrative coherence, and data privacy considerations.
 
 ---
