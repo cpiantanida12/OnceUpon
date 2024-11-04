@@ -6,17 +6,19 @@ import axios from 'axios'
 const BuildScreen = () => {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState('');
+const [summary, setSummary] = useState('');
   const router = useRouter();
 
   const handleSend = async () => {
-    const res = await axios.post("http://127.0.0.1:5000/test-gemini", { "prompt": input })
+    const res = await axios.post("http://127.0.0.1:5000/test-gemini", { "userInput": input })
     console.log(res)
     setMessages([...messages, { text: input, user: true }, { text: res.data.text, user: false }]);
+    setSummary(res.data.text)
     setInput('');
   };
 
   const handleStartReading = () => {
-    router.push('/story?from=build');
+    router.push('/story?summary=' + summary);
   };
 
   return (
