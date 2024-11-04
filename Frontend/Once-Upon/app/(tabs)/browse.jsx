@@ -19,6 +19,8 @@ const genres = [
   "Problem-Solving",
 ];
 
+import { useRouter } from 'expo-router';
+
 const books = [
   {
     id: 1,
@@ -226,10 +228,16 @@ const books = [
 const BrowseScreen = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedBook, setSelectedBook] = useState(null);
+  const router = useRouter();
 
   const handleImageClick = (book) => {
     setSelectedBook(book);
     setModalVisible(true);
+  };
+
+  const routeToStory = () => {
+    setModalVisible(false);
+    router.push('/story?title=' + selectedBook.title + '&summary=' + selectedBook.summary)
   };
 
   const handleCloseModal = () => {
@@ -274,6 +282,7 @@ const BrowseScreen = () => {
               <Text style={styles.modalTitle}>{selectedBook.title}</Text>
               <Text style={styles.modalTheme}>Theme: {selectedBook.theme}</Text>
               <Text style={styles.modalSummary}>{selectedBook.summary}</Text>
+              <Button title="Start Reading" onPress={routeToStory} />
               <Button title="Close" onPress={handleCloseModal} />
             </View>
           </View>
