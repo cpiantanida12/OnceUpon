@@ -73,10 +73,18 @@ Managing narrative cohesion in lengthy stories is a well-known challenge for LLM
 
 ### Methodology
 
-1. **[User Onboarding](https://github.com/cpiantanida12/OnceUpon/blob/master/Frontend/Once-Upon/app/signup.jsx):** Simple onboarding gathers age and preferences to tailor stories.
-2. **[Story Customization with Summary Modification](https://github.com/cpiantanida12/OnceUpon/blob/master/Frontend/Once-Upon/app/(tabs)/build.jsx):** Stories generated from child’s data, with options for children to preview and adjust summaries.
-3. **[Pregenerated Libraries](https://github.com/cpiantanida12/OnceUpon/blob/master/Frontend/Once-Upon/app/(tabs)/browse.jsx):** Pre-generated stories offer modifiable summaries, encouraging creativity and engagement.
-4. **Text-to-Speech Implementation:** TTS allows children to listen along, enhancing accessibility and literacy.
+1. **[User Onboarding](https://github.com/cpiantanida12/OnceUpon/blob/master/Frontend/Once-Upon/app/signup.jsx):** 
+  - Simple onboarding gathers age and preferences to tailor stories.
+2. **[Sequential Story Structuring and Adaptive Character Development](https://github.com/cpiantanida12/OnceUpon/blob/master/Frontend/Once-Upon/app/(tabs)/build.jsx):** 
+  - Once Upon follows a structured yet adaptive approach to storytelling. The pipeline begins with a summary generation phase, where an age-appropriate overview is crafted. This summary not only sets the scene but also ensures each chapter is grounded in a predefined plot, offering age-specific engagement. We use a specialized prompt template that outlines each chapter separately, allowing for clear direction and continuity in the storyline.
+
+  - With the summary in place, the character extraction phase isolates the main characters and details their personality traits. This phase is crucial because it anchors each character’s evolution and role in the story, aligning their actions and language to the child’s comprehension level and interests. As each chapter unfolds, these characteristics shape the narrative, ensuring each part builds upon the previous events while remaining engaging and immersive.
+
+  - Finally, each chapter is generated sequentially using the chapter generation pipeline. Here, Gemini-1.0-pro creates detailed, age-appropriate text, following the defined structure and adding narrative richness. To control token limits, each chapter is written to a specific length, maintaining the pacing and flow of the story. The integration of character details within each chapter enhances the story’s depth, making Once Upon’s stories feel uniquely crafted for each child.
+3. **[Pregenerated Libraries](https://github.com/cpiantanida12/OnceUpon/blob/master/Frontend/Once-Upon/app/(tabs)/browse.jsx):** 
+  - Pre-generated stories offer modifiable summaries, encouraging creativity and engagement.
+4. **Text-to-Speech Implementation:** 
+  - TTS allows children to listen along, enhancing accessibility and literacy.
 
 ---
 
