@@ -1,23 +1,26 @@
 import React, { useState } from 'react';
-import { StyleSheet, View, TextInput, Button, Text, ScrollView, TouchableOpacity } from 'react-native';
+import { StyleSheet, View, TextInput, Button, Text, ScrollView, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { useRouter } from 'expo-router';
 import axios from 'axios'
 
 const BuildScreen = () => {
-  const [messages, setMessages] = useState([]);
+const [messages, setMessages] = useState([{text: "Hi there! What would you like to read today?", user: false}]);
+const [loading, setLoading] = useState(false);
   const [input, setInput] = useState('');
 const [summary, setSummary] = useState('');
   const router = useRouter();
 
   const handleSend = async () => {
+    setLoading(true)
     const res = await axios.post("http://127.0.0.1:5000/test-gemini", { "userInput": input })
     console.log(res)
     setMessages([...messages, { text: input, user: true }, { text: res.data.text, user: false }]);
     setSummary(res.data.text)
     setInput('');
+    setLoading(false)
   };
 
-  const handleStartReading = () => {
+  const handleStartReading = (summary) => {
     router.push('/story?summary=' + summary);
   };
 
@@ -27,14 +30,17 @@ const [summary, setSummary] = useState('');
         {messages.map((message, index) => (
           <View key={index} style={[styles.message, message.user ? styles.userMessage : styles.botMessage]}>
             <Text>{message.text}</Text>
-            {!message.user && (
-              <TouchableOpacity onPress={handleStartReading} style={styles.startReadingButton}>
+            {!message.user && index > 0 && (
+              <TouchableOpacity onPress={() => handleStartReading(message.text)} style={styles.startReadingButton}>
                 <Text style={styles.startReadingText}>Start Reading</Text>
               </TouchableOpacity>
             )}
           </View>
         ))}
       </ScrollView>
+      {loading && (
+        <ActivityIndicator size="large" color="#214b68"/>
+      )}
       <View style={styles.inputContainer}>
         <TextInput
           style={styles.input}
@@ -63,11 +69,11 @@ const styles = StyleSheet.create({
     marginVertical: 5,
   },
   userMessage: {
-    backgroundColor: '#dcf8c6',
+    backgroundColor: '#CCCCFF',
     alignSelf: 'flex-end',
   },
   botMessage: {
-    backgroundColor: '#ececec',
+    backgroundColor: '#89CFF0',
     alignSelf: 'flex-start',
   },
   inputContainer: {
@@ -91,6 +97,7 @@ const styles = StyleSheet.create({
   startReadingText: {
     color: '#fff',
     textAlign: 'center',
+    fontSize: '25px'
   },
 });
 
