@@ -270,7 +270,7 @@ const BrowseScreen = () => {
         </View>
       ))}
 
-      {selectedBook && (
+{selectedBook && (
         <Modal
           animationType="slide"
           transparent={true}
@@ -279,11 +279,15 @@ const BrowseScreen = () => {
         >
           <View style={styles.modalContainer}>
             <View style={styles.modalContent}>
+              {/* Close button positioned at the top right */}
+              <TouchableOpacity onPress={handleCloseModal} style={styles.closeButton}>
+                <Text style={styles.closeButtonText}>X</Text>
+              </TouchableOpacity>
+
               <Text style={styles.modalTitle}>{selectedBook.title}</Text>
               <Text style={styles.modalTheme}>Theme: {selectedBook.theme}</Text>
               <Text style={styles.modalSummary}>{selectedBook.summary}</Text>
               <Button title="Start Reading" onPress={routeToStory} />
-              <Button title="Close" onPress={handleCloseModal} />
             </View>
           </View>
         </Modal>
@@ -332,12 +336,13 @@ const styles = StyleSheet.create({
     padding: 20,
     borderRadius: 10,
     alignItems: "center",
+    position: "relative",
   },
   modalTitle: {
     fontSize: 24,
     fontWeight: "bold",
     marginBottom: 10,
-    textAlign: "center"
+    textAlign: "center",
   },
   modalSummary: {
     fontSize: 16,
@@ -349,6 +354,22 @@ const styles = StyleSheet.create({
     fontStyle: "italic",
     marginBottom: 20,
     textAlign: "center",
+  },
+  closeButton: {
+    position: "absolute",
+    top: 10,
+    right: 10,
+    backgroundColor: "red",
+    width: 25,
+    height: 25,
+    borderRadius: 12.5,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  closeButtonText: {
+    color: "white",
+    fontSize: 16,
+    fontWeight: "bold",
   },
 });
 
