@@ -48,6 +48,22 @@ Once Upon uses AI to deliver custom stories based on children’s age and intere
 
 ---
 
+### What Makes OnceUpon Stand Out?
+
+- **Extended, Immersive Storytelling Beyond Standard LLM Limits:**
+Once Upon is able to generate stories to its users that keep them engaged OnceUpon captivates children with stories that go beyond traditional AI-generated content length limits, engaging them in a storytime experience lasting 10 to 15 minutes. By utilizing custom function-calling capabilities, OnceUpon generates narratives that surpass standard token restrictions of large language models (LLMs), achieving story lengths of 8,000 to 10,000 words. This unique approach ensures immersive storytelling that keeps children engaged far longer than typical AI-generated tales.
+
+- **Personalized Story Customization and Interactive Storybuilding:**
+OnceUpon allows children and parents to participate in crafting their story’s journey, offering a summary preview before the story begins. Users can opt to proceed with the suggested story, modify elements of the summary, or create an entirely new storyline. This interactive experience fosters creativity, giving readers control over the direction of their adventure while adding a unique, personalized touch to each bedtime tale.
+
+- **Consistent Story Structure with Advanced Prompt Engineering:**
+While LLMs are known for creativity, maintaining format consistency across multiple responses can be challenging. To deliver a cohesive and reliable experience, OnceUpon employs sophisticated prompt engineering and structured workflows, resulting in a predictable yet engaging narrative flow for each story. This consistency helps ensure that each story feels intentional and aligned with the high-quality experience children and parents expect.
+
+- **Seamless Narrative Cohesion in Long-Form Stories:**
+Managing narrative cohesion in lengthy stories is a well-known challenge for LLMs, as they often struggle with "hallucinations" or diverging details over extended context. OnceUpon tackles this by implementing custom techniques that ensure consistency in story arcs, character development, themes, and plot progression. Extensive experimentation and fine-tuning have resulted in a solution that produces cohesive, sensible, and delightful stories that flow smoothly from beginning to end.
+
+---
+
 ### Methodology
 
 1. **User Onboarding:** Simple onboarding gathers age and preferences to tailor stories.
