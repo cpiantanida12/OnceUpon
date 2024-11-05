@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
-import { StyleSheet, View, Text, Button, TouchableOpacity } from 'react-native';
-import { useGlobalSearchParams } from 'expo-router';
-import { Ionicons } from '@expo/vector-icons';
-import useHistory from './useHistory';
-import axios from 'axios';
+import React, { useState, useEffect } from "react";
+import { StyleSheet, View, Text, Button, TouchableOpacity, ScrollView } from "react-native";
+import { useGlobalSearchParams } from "expo-router";
+import { Ionicons } from "@expo/vector-icons";
+import useHistory from "./useHistory";
+import axios from "axios";
 
 // import { useSearchParams } from 'expo-router';
 
@@ -67,30 +67,40 @@ const StoryScreen = () => {
 
   useEffect(() => {
     const fetchStory = async () => {
-      const res = await axios.post("http://127.0.0.1:5000/generate-summary", { "userInput": summary })
-      console.log(res)
-      const storyRes = await axios.post("http://127.0.0.1:5000/generate-story", { "userInput": res.data.text})
-      console.log(storyRes)
-      setStory(storyRes.data.text)
-    }
-    fetchStory()
-  }, [])
-//   const { goBack } = getQueryParams();
+      const res = await axios.post("http://127.0.0.1:5000/generate-summary", {
+        userInput: summary,
+      });
+      console.log(res);
+      const storyRes = await axios.post(
+        "http://127.0.0.1:5000/generate-story",
+        { userInput: res.data.text }
+      );
+      console.log(storyRes);
+      setStory(storyRes.data.text);
+    };
+    fetchStory();
+  }, []);
+  //   const { goBack } = getQueryParams();
   //const { goBack } = useHistory();
 
   return (
     <View style={styles.container}>
-      <View style={styles.header}>
-        {/* <TouchableOpacity onPress={goBack} style={styles.backButton}>
+      <ScrollView>
+        <View style={styles.header}>
+          {/* <TouchableOpacity onPress={goBack} style={styles.backButton}>
           <Ionicons name="arrow-back" size={24} color="black" />
         </TouchableOpacity> */}
-        <Text style={styles.headerText}>{title ? title : "Title Placeholder"}</Text>
-      </View>
-      <Text style={styles.title}>{story ? story : "Give me a minute, I'm thinking!..."}</Text>
+          <Text style={styles.headerText}>
+            {title ? title : "Title Placeholder"}
+          </Text>
+        </View>
+        <Text style={styles.title}>
+          {story ? story : "Give me a minute, I'm thinking..."}
+        </Text>
+      </ScrollView>
     </View>
   );
 };
-
 
 // const StoryScreen = () => {
 //   const router = useRouter();
@@ -134,8 +144,8 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   header: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     marginBottom: 20,
   },
   backButton: {
@@ -143,28 +153,28 @@ const styles = StyleSheet.create({
   },
   headerText: {
     fontSize: 24,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   title: {
     fontSize: 20,
-    textAlign: 'center',
+    textAlign: "center",
     marginBottom: 20,
   },
   controls: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
   },
   progressBar: {
     flex: 1,
     height: 10,
-    backgroundColor: '#ddd',
+    backgroundColor: "#ddd",
     borderRadius: 5,
     marginLeft: 10,
   },
   progress: {
-    width: '30%',
-    height: '100%',
-    backgroundColor: '#6200ea',
+    width: "30%",
+    height: "100%",
+    backgroundColor: "#6200ea",
     borderRadius: 5,
   },
 });
