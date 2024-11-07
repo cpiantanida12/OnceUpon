@@ -50,7 +50,7 @@ The user initiates the story by providing an age range and a story idea, which t
 - **Personalized Recommendations:** Age- and theme-based story recommendations via a simple onboarding questionnaire, making each story relevant and engaging.
 - **[UI Development in React Native](https://github.com/cpiantanida12/OnceUpon/tree/master/Frontend/Once-Upon):** Child-friendly, interactive UI for seamless navigation on iOS and Android.
 - **[Browse Story Page](https://github.com/cpiantanida12/OnceUpon/blob/master/Frontend/Once-Upon/app/(tabs)/browse.jsx):** Theme-organized story library with summaries and custom story creation, allowing creative control.
-- **Text-to-Speech (TTS) Integration:** Provides an immersive auditory experience using Google Text-to-Speech (gTTS), a Python library, especially useful for non-readers.
+- **Text-to-Speech (TTS) Integration:** Provides an immersive auditory experience using Expo Speech, a JavaScript library, especially useful for non-readers.
 - **[Backend and Data Storage](https://github.com/cpiantanida12/OnceUpon/tree/master/Backend):** Secure backend with minimal data collection, supporting real-time story customization.
 
 ---
