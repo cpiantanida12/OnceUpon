@@ -132,7 +132,7 @@ const books = [
     theme: "Friendship",
     image: require("../../assets/images/browse-page-images/invisible_friend.jpg"),
     summary:
-      "In the vibrant town of Breezyville, the annual Great Balloon Race is the highlight of the year. Eleven-year-old Mia teams up with her shy neighbor, Alex, a brilliant inventor but lacking confidence, to create a stunning balloon octopus. When a sudden storm sweeps them away during the race, they find themselves navigating strange lands filled with talking animals and whimsical creatures. As they work together to find their way back home, Mia and Alex learn valuable lessons about friendship, perseverance, and believing in themselves.",
+      "Oliver, a quiet boy who feels out of place at his new school, stumbles upon a magical bracelet that makes him invisible. Thrilled at first, he uses his new power to avoid awkward situations and sneak around unnoticed. But when he overhears other kids talking about their struggles and fears, Oliver realizes he’s not as alone as he thought. With the help of Emma, a kind classmate who senses something unusual, Oliver learns that true friendship isn’t about hiding but about being seen for who you are. Together, they discover the power of connection and acceptance.",
   },
   {
     id: 15,
@@ -140,7 +140,7 @@ const books = [
     theme: "Friendship",
     image: require("../../assets/images/browse-page-images/bench_big_oak_tree.jpg"),
     summary:
-      "During a camping trip with his class, Charlie gets separated from the group and finds himself lost in a part of the forest no one has ever explored. Strange whispers echo through the trees, and glowing footprints lead him deeper into the woods. Charlie soon meets creatures who seem both helpful and mischievous, and he must figure out who to trust if he wants to find his way back. Will Charlie make it out before nightfall, or will the forest’s secrets keep him forever?",
+      "Sam and Leo have spent every summer afternoon sitting on the old bench beneath the giant oak tree, sharing dreams, snacks, and secrets. But when Leo learns that his family is moving to a new city, both friends struggle with the fear of saying goodbye. Determined to make their last days together unforgettable, they set out on a mission to build something that will keep their friendship alive—a time capsule buried beneath their beloved tree. As the moving day approaches, Sam and Leo learn that true friendship can endure, no matter how far apart they are.",
   },
   {
     id: 16,
