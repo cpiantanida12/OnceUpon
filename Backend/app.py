@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, send_file
 from flask_cors import CORS
 from pymongo import MongoClient
 from bson.objectid import ObjectId
@@ -27,7 +27,7 @@ model = genai.GenerativeModel('gemini-1.5-pro', generation_config=generation_con
 def generate_from_gemini():
     data = request.get_json()
     userInput = data.get('userInput')
-    prompt = f"You will be generating a story of 3 chapters with total narration time of 15 minutes. Give me a summary with brief descriptions for each of the three chapters of this story that is engaging for a 6 year old. The story prompt - {userInput}. \n Note: You will be using this chapter wise to generate the actual chapters later on. To ensure the chapters are long enough, give enough information and detail in the summary that can be built up on during story generation. Each chapter's summary should be in a paragrah format."
+    prompt = f"You will be generating a story of 3 chapters with total narration time of 15 minutes. Give me a summary with brief descriptions for each of the three chapters of this story that is engaging for a 6-year-old. The story prompt - {userInput}. Note: You will be using this chapter-wise to generate the actual chapters later on. To ensure the chapters are long enough, give enough information and detail in the summary that can be built up on during story generation. Each chapter's summary should be in a paragraph format."
     response = get_chat_response(prompt)
     return jsonify({"text": response})
 
@@ -35,14 +35,24 @@ def get_chat_response(userInput: str) -> str:
     text_response = []
     responses = model.generate_content(userInput)
     for chunk in responses:
-        text_response.append(chunk.text)
+        cleaned_text = chunk.text.replace('*', ' ').replace('#', ' ')
+        text_response.append(cleaned_text)
     return "".join(text_response)
+
+@app.route('/modify-summary', methods=['POST'])
+def modify_summary():
+    data = request.get_json()
+    userModifications = data.get('userModifications')
+    existingSummary = data.get('existingSummary')
+    prompt = f"You will modify a given story summary - {existingSummary} with the following changes requested by the user - {userModifications}. Return in the same format as the provided summary."
+    response = get_chat_response(prompt)
+    return jsonify({"text": response})
 
 @app.route('/generate-summary', methods=['POST'])
 def generate_summary():
     data = request.get_json()
     userInput = data.get('userInput')
-    prompt = f"You will be generating a story of 3 chapters with total narration time of 20 minutes. Give me a summary with brief descriptions for each of the three chapters of this story that is engaging for a child. To add on, also list important characters with a description about each characters. The story prompt - {userInput}. \n Note: You will be using this chapter wise to generate the actual chapters later on. To ensure the chapters are long enough, give enough information and detail in the summary that can be built up on during story generation. Each chapter's summary should be in a paragrah format."
+    prompt = f"You will be generating a story of 3 chapters with total narration time of 20 minutes. Give me a summary with brief descriptions for each of the three chapters of this story that is engaging for a child. Also, list important characters with descriptions. The story prompt - {userInput}. Note: You will be using this chapter-wise to generate the actual chapters later on. To ensure the chapters are long enough, give enough information and detail in the summary that can be built up on during story generation. Each chapter's summary should be in paragraph format."
     response = get_chat_response(prompt)
     return jsonify({"text": response})
 
@@ -50,7 +60,15 @@ def generate_summary():
 def generate_story():
     data = request.get_json()
     output_from_prompt2 = data.get('userInput')
-    prompt = f"You will be generating an interesting and unique children’s story of 3 chapters with total narration time of 20 minutes and from 6000 to 8000 tokens. This story should be based off of the detailed summary and character descriptions that I give you. The detailed summary - {output_from_prompt2}. \n Note: The story should be in paragraph format. Stick to the outline of the story and be sure to be consistent with characters and storyline throughout the entire story. The story MUST be in English entirely."
+    prompt = f"You will be generating an interesting and unique children’s story of 3 chapters with total narration time of 20 minutes and from 6000 to 8000 tokens. This story should be based on the detailed summary and character descriptions provided. The detailed summary - {output_from_prompt2}. Note: The story should be in paragraph format. Stick to the outline of the story and be consistent with characters and storyline throughout. The story MUST be in English entirely."
+    response = get_chat_response(prompt)
+    return jsonify({"text": response})
+
+@app.route('/generate-custom-title', methods=['POST'])
+def generate_custom_title():
+    data = request.get_json()
+    userSummary = data.get('userSummary')
+    prompt = f"You will create a story title based on the following summary - {userSummary}. Return as a single string."
     response = get_chat_response(prompt)
     return jsonify({"text": response})
 
