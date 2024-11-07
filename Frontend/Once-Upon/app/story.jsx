@@ -1,69 +1,23 @@
 import React, { useState, useEffect } from "react";
-import { StyleSheet, View, Text, Button, TouchableOpacity, ScrollView } from "react-native";
+import {
+  StyleSheet,
+  View,
+  Text,
+  Button,
+  TouchableOpacity,
+  ScrollView,
+} from "react-native";
 import { useGlobalSearchParams } from "expo-router";
-import { Ionicons } from "@expo/vector-icons";
-import useHistory from "./useHistory";
+// import { Ionicons } from "@expo/vector-icons";
+// import useHistory from "./useHistory";
 import axios from "axios";
-
-// import { useSearchParams } from 'expo-router';
-
-// const useHistory = () => {
-//   const [history, setHistory] = useState([]);
-//   const router = useRouter();
-
-//   useEffect(() => {
-//     // Log current path and history for debugging
-//     console.log('Current Path:', router.asPath);
-//     console.log('History Before Update:', history);
-
-//     setHistory(prevHistory => {
-//       if (prevHistory[prevHistory.length - 1] !== router.asPath) {
-//         const newHistory = [...prevHistory, router.asPath];
-//         console.log('Updated History:', newHistory);
-//         return newHistory;
-//       }
-//       return prevHistory;
-//     });
-//   }, [router.asPath]);
-
-//   const goBack = () => {
-//     setHistory(prevHistory => {
-//       const newHistory = [...prevHistory];
-//       newHistory.pop(); // Remove the last entry
-//       if (newHistory.length > 0) {
-//         const previousPath = newHistory[newHistory.length - 1];
-//         router.push(previousPath); // Navigate to the previous path
-//       } else {
-//         router.back(); // Fallback to router.back() if no history left
-//       }
-//       console.log('History:', newHistory);
-//       return newHistory;
-//     });
-//   };
-
-//   return { history, goBack };
-// };
-
-// const getQueryParams = () => {
-//     const search = window.location.search;
-//     console.log("Search:", search)
-//     const params = new URLSearchParams(search);
-//     return Object.fromEntries(params.entries());
-//   };
-
-//   const { from } = getQueryParams();
-
-//   const handleBack = () => {
-//     if (from === 'build') {
-//       router.push('/build');
-//     } else {
-//       router.back();
-//     }
-//   };
+import * as Speech from "expo-speech";
 
 const StoryScreen = () => {
   const { title, summary } = useGlobalSearchParams();
   const [story, setStory] = useState("");
+  const [isPaused, setIsPaused] = useState(false);
+  const [customTitle, setCustomTitle] = useState("");
 
   useEffect(() => {
     const fetchStory = async () => {
@@ -78,65 +32,62 @@ const StoryScreen = () => {
       console.log(storyRes);
       setStory(storyRes.data.text);
     };
+    const fetchTitle = async () => {
+      const res = await axios.post(
+        "http://127.0.0.1:5000/generate-custom-title",
+        {
+          userSummary: summary,
+        }
+      );
+      setCustomTitle(res.data.text);
+    };
     fetchStory();
+    if (title === undefined) fetchTitle();
   }, []);
-  //   const { goBack } = getQueryParams();
-  //const { goBack } = useHistory();
+
+  const startReadingStory = () => {
+    Speech.stop();
+
+    Speech.speak(story, {
+      onDone: () => setIsPaused(false),
+    });
+    setIsPaused(false);
+  };
+
+  const togglePauseResume = () => {
+    if (isPaused) {
+      Speech.resume();
+      setIsPaused(false); // Set state to "not paused" after resuming
+    } else {
+      Speech.pause();
+      setIsPaused(true); // Set state to "paused" after pausing
+    }
+  };
 
   return (
     <View style={styles.container}>
       <ScrollView>
         <View style={styles.header}>
-          {/* <TouchableOpacity onPress={goBack} style={styles.backButton}>
-          <Ionicons name="arrow-back" size={24} color="black" />
-        </TouchableOpacity> */}
-          <Text style={styles.headerText}>
-            {title ? title : "Title Placeholder"}
-          </Text>
+          <Text style={styles.headerText}>{title ? title : customTitle}</Text>
         </View>
-        <Text style={styles.title}>
-          {story ? story : "Give me a minute, I'm thinking..."}
-        </Text>
+        {story ? (
+          <View>
+            <View style={styles.controls}>
+              <Button title="Start" onPress={startReadingStory}/>
+              <Button
+                title={isPaused ? "Resume" : "Pause"}
+                onPress={togglePauseResume}
+              />
+            </View>
+            <Text style={styles.title}>{story}</Text>
+          </View>
+        ) : (
+          <Text style={styles.title}>Give me a minute, I'm thinking...</Text>
+        )}
       </ScrollView>
     </View>
   );
 };
-
-// const StoryScreen = () => {
-//   const router = useRouter();
-//   // const params = useSearchParams();
-//   // const from = params.from;
-//     const handleBack = () => {
-//       router.back();
-//     };
-
-//   // const handleBack = () => {
-//   //   console.log(from)
-//   //   if (from === 'build') {
-//   //     router.push('/build');
-//   //   } else {
-//   //     router.back();
-//   //   }
-//   // };
-
-//   return (
-//     <View style={styles.container}>
-//       <View style={styles.header}>
-//         <TouchableOpacity onPress={handleBack} style={styles.backButton}>
-//           <Ionicons name="arrow-back" size={24} color="black" />
-//         </TouchableOpacity>
-//         <Text style={styles.headerText}>Story</Text>
-//       </View>
-//       <Text style={styles.title}>This is the story that you generated. I hope you like it. This is obviously just a placeholder lmao.</Text>
-//       <View style={styles.controls}>
-//         <Button title="Play" onPress={() => {}} />
-//         <View style={styles.progressBar}>
-//           <View style={styles.progress} />
-//         </View>
-//       </View>
-//     </View>
-//   );
-// };
 
 const styles = StyleSheet.create({
   container: {
@@ -163,6 +114,7 @@ const styles = StyleSheet.create({
   controls: {
     flexDirection: "row",
     alignItems: "center",
+    gap: 10,
   },
   progressBar: {
     flex: 1,
