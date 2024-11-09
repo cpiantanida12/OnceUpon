@@ -19,6 +19,8 @@ const genres = [
   "Problem-Solving",
 ];
 
+import { useRouter } from 'expo-router';
+
 const books = [
   {
     id: 1,
@@ -32,7 +34,7 @@ const books = [
     id: 2,
     title: "Luna and the Midnight Garden",
     theme: "Teamwork",
-    image: require("../../assets/images/browse-page-images/luna_midnight.jpg"),
+    image: require("../../assets/images/browse-page-images/luna_midnight-new.jpg"),
     summary:
       "Luna, a curious fox cub, hears a rumor about a hidden garden that only appears under the light of the full moon. Eager to explore, she sneaks out at night and stumbles upon strange glowing plants and mysterious puzzles guarding the garden’s secrets. Along the way, Luna meets an owl, a hedgehog, and a firefly, each with unique skills to help her on her journey. But as they work together, Luna realizes the garden may hold more than just mysteries—perhaps even the answers to questions she didn't know she had. What wonders await Luna beneath the midnight sky?",
   },
@@ -130,7 +132,7 @@ const books = [
     theme: "Friendship",
     image: require("../../assets/images/browse-page-images/invisible_friend.jpg"),
     summary:
-      "In the vibrant town of Breezyville, the annual Great Balloon Race is the highlight of the year. Eleven-year-old Mia teams up with her shy neighbor, Alex, a brilliant inventor but lacking confidence, to create a stunning balloon octopus. When a sudden storm sweeps them away during the race, they find themselves navigating strange lands filled with talking animals and whimsical creatures. As they work together to find their way back home, Mia and Alex learn valuable lessons about friendship, perseverance, and believing in themselves.",
+      "Oliver, a quiet boy who feels out of place at his new school, stumbles upon a magical bracelet that makes him invisible. Thrilled at first, he uses his new power to avoid awkward situations and sneak around unnoticed. But when he overhears other kids talking about their struggles and fears, Oliver realizes he’s not as alone as he thought. With the help of Emma, a kind classmate who senses something unusual, Oliver learns that true friendship isn’t about hiding but about being seen for who you are. Together, they discover the power of connection and acceptance.",
   },
   {
     id: 15,
@@ -138,7 +140,7 @@ const books = [
     theme: "Friendship",
     image: require("../../assets/images/browse-page-images/bench_big_oak_tree.jpg"),
     summary:
-      "During a camping trip with his class, Charlie gets separated from the group and finds himself lost in a part of the forest no one has ever explored. Strange whispers echo through the trees, and glowing footprints lead him deeper into the woods. Charlie soon meets creatures who seem both helpful and mischievous, and he must figure out who to trust if he wants to find his way back. Will Charlie make it out before nightfall, or will the forest’s secrets keep him forever?",
+      "Sam and Leo have spent every summer afternoon sitting on the old bench beneath the giant oak tree, sharing dreams, snacks, and secrets. But when Leo learns that his family is moving to a new city, both friends struggle with the fear of saying goodbye. Determined to make their last days together unforgettable, they set out on a mission to build something that will keep their friendship alive—a time capsule buried beneath their beloved tree. As the moving day approaches, Sam and Leo learn that true friendship can endure, no matter how far apart they are.",
   },
   {
     id: 16,
@@ -226,10 +228,16 @@ const books = [
 const BrowseScreen = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedBook, setSelectedBook] = useState(null);
+  const router = useRouter();
 
   const handleImageClick = (book) => {
     setSelectedBook(book);
     setModalVisible(true);
+  };
+
+  const routeToStory = () => {
+    setModalVisible(false);
+    router.push('/story?title=' + selectedBook.title + '&summary=' + selectedBook.summary)
   };
 
   const handleCloseModal = () => {
@@ -262,7 +270,7 @@ const BrowseScreen = () => {
         </View>
       ))}
 
-      {selectedBook && (
+{selectedBook && (
         <Modal
           animationType="slide"
           transparent={true}
@@ -271,10 +279,15 @@ const BrowseScreen = () => {
         >
           <View style={styles.modalContainer}>
             <View style={styles.modalContent}>
+              {/* Close button positioned at the top right */}
+              <TouchableOpacity onPress={handleCloseModal} style={styles.closeButton}>
+                <Text style={styles.closeButtonText}>X</Text>
+              </TouchableOpacity>
+
               <Text style={styles.modalTitle}>{selectedBook.title}</Text>
               <Text style={styles.modalTheme}>Theme: {selectedBook.theme}</Text>
               <Text style={styles.modalSummary}>{selectedBook.summary}</Text>
-              <Button title="Close" onPress={handleCloseModal} />
+              <Button title="Start Reading" onPress={routeToStory} />
             </View>
           </View>
         </Modal>
@@ -323,12 +336,13 @@ const styles = StyleSheet.create({
     padding: 20,
     borderRadius: 10,
     alignItems: "center",
+    position: "relative",
   },
   modalTitle: {
     fontSize: 24,
     fontWeight: "bold",
     marginBottom: 10,
-    textAlign: "center"
+    textAlign: "center",
   },
   modalSummary: {
     fontSize: 16,
@@ -340,6 +354,22 @@ const styles = StyleSheet.create({
     fontStyle: "italic",
     marginBottom: 20,
     textAlign: "center",
+  },
+  closeButton: {
+    position: "absolute",
+    top: 10,
+    right: 10,
+    backgroundColor: "red",
+    width: 25,
+    height: 25,
+    borderRadius: 12.5,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  closeButtonText: {
+    color: "white",
+    fontSize: 16,
+    fontWeight: "bold",
   },
 });
 
