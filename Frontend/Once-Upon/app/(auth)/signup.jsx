@@ -33,7 +33,7 @@ const SignUpPage = () => {
       }
 
       try {
-        const response = await fetch('https://47a3-34-71-64-138.ngrok-free.app/auth/signup', {
+        const response = await fetch('https://4abe-34-55-98-243.ngrok-free.app/auth/signup', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

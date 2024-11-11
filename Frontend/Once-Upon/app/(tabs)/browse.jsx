@@ -32,7 +32,7 @@ const books = [
     id: 2,
     title: "Luna and the Midnight Garden",
     theme: "Teamwork",
-    image: require("../../assets/images/browse-page-images/luna_midnight.jpg"),
+    image: require("../../assets/images/browse-page-images/luna_midnight-new.jpg"),
     summary:
       "Luna, a curious fox cub, hears a rumor about a hidden garden that only appears under the light of the full moon. Eager to explore, she sneaks out at night and stumbles upon strange glowing plants and mysterious puzzles guarding the garden’s secrets. Along the way, Luna meets an owl, a hedgehog, and a firefly, each with unique skills to help her on her journey. But as they work together, Luna realizes the garden may hold more than just mysteries—perhaps even the answers to questions she didn't know she had. What wonders await Luna beneath the midnight sky?",
   },

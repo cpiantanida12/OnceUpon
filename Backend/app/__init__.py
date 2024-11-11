@@ -4,7 +4,7 @@ from flask_cors import CORS
 from dotenv import load_dotenv
 import os
 
-load_dotenv()
+load_dotenv('/home/jupyter/Backend/.env')
 
 def create_app():
     app = Flask(__name__)
@@ -19,12 +19,10 @@ def create_app():
     CORS(app)
 
     # Register blueprints
-    from app.routes.signup_routes import bp as signup_bp
     from app.routes.auth_routes import bp as auth_bp
     from app.routes.browse_routes import bp as browse_bp
     from app.routes.chatbot_routes import bp as chatbot_bp
 
-    app.register_blueprint(signup_bp)
     app.register_blueprint(auth_bp)
     app.register_blueprint(browse_bp)
     app.register_blueprint(chatbot_bp)
