@@ -3,6 +3,8 @@ import { StyleSheet, View, Text, TouchableOpacity, Alert, ScrollView } from 'rea
 import { useRouter } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
+const API_URL = 'https://96eb-34-136-247-50.ngrok-free.app';
+
 const SurveyPage = () => {
   const [selectedThemes, setSelectedThemes] = useState([]);
   const [selectedHobbies, setSelectedHobbies] = useState([]);
@@ -57,7 +59,7 @@ const SurveyPage = () => {
       }
 
       // Send the survey data and email to the backend
-      const response = await fetch('https://4abe-34-55-98-243.ngrok-free.app/auth/survey', {
+      const response = await fetch(`${API_URL}/auth/survey`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

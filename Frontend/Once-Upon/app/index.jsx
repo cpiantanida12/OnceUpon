@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'expo-router';
-import { useUser } from '../../UserContext';
+import { useUser } from '../UserContext';
 import { View, Image, StyleSheet, ActivityIndicator } from 'react-native';
 
 export default function Index() {
@@ -12,7 +12,7 @@ export default function Index() {
     const splashTimer = setTimeout(() => {
       setShowSplash(false);
       if (userEmail) {
-        router.replace('/(tabs)');
+        router.replace('/(tabs)/browse');
       } else {
         router.replace('/(auth)/landing');
       }
@@ -25,7 +25,7 @@ export default function Index() {
     <View style={styles.container}>
       {showSplash ? (
         <Image 
-          source={require('../../assets/images/just_logo.png')} 
+          source={require('../assets/images/just_logo.png')}
           style={styles.logo}
           resizeMode="contain"
         />

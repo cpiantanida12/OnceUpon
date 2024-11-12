@@ -1,5 +1,5 @@
 from langchain.prompts import PromptTemplate
-from langchain.llms import VertexAI
+from langchain_google_vertexai import VertexAI
 from langchain.chains import LLMChain
 import vertexai
 from vertexai.preview.generative_models import GenerativeModel
@@ -8,7 +8,7 @@ from transformers import pipeline
 
 vertexai.init(project='adsp-capstone-once-upon', location = 'us-central1')
 llm = VertexAI(model_name="gemini-1.0-pro", max_output_tokens=8192, max_tokens = 32000)
-summarizer = pipeline("summarization")
+summarizer = pipeline("summarization", model="sshleifer/distilbart-cnn-12-6")
 
 # Define prompt template for the summary
 summary_prompt_template = PromptTemplate(
@@ -61,12 +61,13 @@ modifications_prompt_template = PromptTemplate(
     [Chapter 3 summary]
     Ensure each chapter summary is complete and shows a clear progression of the story.
     """
+)
 
 # Create LLMChain for summary generation
 modifications_chain = LLMChain(llm=llm, prompt=modifications_prompt_template)
     
-def generate_modified_summary:(user_modifications, user_age, prev_summary, chat_history):
-    summary = modifications_chain.run(user_modifications=user_modifications, user_age=user_age, prev_summary, chat_history)
+def generate_modified_summary(user_modifications, user_age, prev_summary, chat_history):
+    summary = modifications_chain.run(user_modifications=user_modifications, user_age=user_age, prev_summary=prev_summary, chat_history=chat_history)
     return summary
 
 # Define updated prompt template for chapter generation

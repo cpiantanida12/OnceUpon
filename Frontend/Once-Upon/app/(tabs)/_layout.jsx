@@ -2,15 +2,21 @@ import React from 'react';
 import { Tabs } from 'expo-router';
 import { MaterialCommunityIcons, FontAwesome6, Feather } from '@expo/vector-icons';
 
-const Home = () => {
+const TabLayout = () => {
   return (
-    <Tabs screenOptions={{ headerShown: false }}>
+    <Tabs 
+      screenOptions={{ 
+        headerShown: false,
+        tabBarActiveTintColor: '#6200ea',
+        tabBarInactiveTintColor: 'gray',
+      }}
+    >
       <Tabs.Screen
         name="browse"
         options={{
           title: 'Browse',
           tabBarIcon: ({ color, size }) => (
-            <MaterialCommunityIcons name="bookshelf" size={32} color="black" />
+            <MaterialCommunityIcons name="bookshelf" size={32} color={color} />
           ),
         }}
       />
@@ -19,7 +25,7 @@ const Home = () => {
         options={{
           title: 'Build',
           tabBarIcon: ({ color, size }) => (
-            <FontAwesome6 name="wand-magic-sparkles" size={24} color="black" />
+            <FontAwesome6 name="wand-magic-sparkles" size={24} color={color} />
           ),
         }}
       />
@@ -28,7 +34,7 @@ const Home = () => {
         options={{
           title: 'Account',
           tabBarIcon: ({ color, size }) => (
-            <Feather name="user" size={32} color="black" />
+            <Feather name="user" size={32} color={color} />
           ),
         }}
       />
@@ -36,4 +42,4 @@ const Home = () => {
   );
 };
 
-export default Home;
+export default TabLayout;

@@ -3,6 +3,7 @@ from firebase_admin import firestore
 import bcrypt
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
+from typing import Optional, Dict, List, Any, Tuple
 
 # Initialize Firebase app only if it hasn't been initialized
 if not firebase_admin._apps:
@@ -95,3 +96,79 @@ def get_user_age(user_id):
     except Exception as e:
         print(f"Error calculating age: {str(e)}")
         return None
+
+    # Conversation Services
+def get_conversation_state(user_id: str) -> Tuple[Optional[str], List[Dict[str, Any]]]:
+    """Retrieve conversation state from Firestore"""
+    try:
+        conv_doc = db.collection('conversations').document(user_id).get()
+        if not conv_doc.exists:
+            return None, []
+            
+        data = conv_doc.to_dict()
+        return data.get('prev_summary'), data.get('chat_history', [])
+        
+    except Exception as e:
+        print(f"Error retrieving conversation: {str(e)}")
+        return None, []
+
+def save_conversation_state(user_id: str, prev_summary: str, chat_history: List[Dict[str, Any]]):
+    """Save conversation state to Firestore"""
+    try:
+        db.collection('conversations').document(user_id).set({
+            'prev_summary': prev_summary,
+            'chat_history': chat_history,
+            'updated_at': datetime.utcnow(),
+            'user_id': user_id
+        })
+        return {"success": True}
+    except Exception as e:
+        return {"error": f"Error saving conversation: {str(e)}"}
+
+def clear_conversation(user_id: str) -> Dict[str, Any]:
+    """Clear user's conversation state"""
+    try:
+        db.collection('conversations').document(user_id).delete()
+        return {"success": True}
+    except Exception as e:
+        return {"error": f"Error clearing conversation: {str(e)}"}
+
+# Story Services
+def save_story(user_id: str, chapters: Dict[str, str], summary: str) -> Dict[str, Any]:
+    """Save completed story to Firestore"""
+    try:
+        story_ref = db.collection('stories').document()
+        story_ref.set({
+            'user_id': user_id,
+            'created_at': datetime.utcnow(),
+            'chapters': chapters,
+            'summary': summary
+        })
+        return {"success": True, "story_id": story_ref.id}
+    except Exception as e:
+        return {"error": f"Error saving story: {str(e)}"}
+
+def get_user_stories(user_id: str) -> List[Dict[str, Any]]:
+    """Retrieve all stories for a user"""
+    try:
+        stories = db.collection('stories').where('user_id', '==', user_id).stream()
+        return [story.to_dict() for story in stories]
+    except Exception as e:
+        print(f"Error retrieving stories: {str(e)}")
+        return []
+
+# Cleanup Service
+def cleanup_old_conversations(hours: int = 24):
+    """Delete conversations older than specified hours"""
+    try:
+        cutoff = datetime.utcnow() - timedelta(hours=hours)
+        old_convs = db.collection('conversations')\
+            .where('updated_at', '<', cutoff)\
+            .stream()
+        
+        for conv in old_convs:
+            conv.reference.delete()
+            
+        return {"success": True}
+    except Exception as e:
+        return {"error": f"Error cleaning up conversations: {str(e)}"}

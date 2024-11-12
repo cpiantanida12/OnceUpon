@@ -4,6 +4,8 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 import { Link, useRouter } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
+const API_URL = 'https://96eb-34-136-247-50.ngrok-free.app';
+
 const SignUpPage = () => {
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
@@ -33,7 +35,7 @@ const SignUpPage = () => {
       }
 
       try {
-        const response = await fetch('https://4abe-34-55-98-243.ngrok-free.app/auth/signup', {
+        const response = await fetch(`${API_URL}/auth/signup`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
