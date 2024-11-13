@@ -3,7 +3,7 @@ import { StyleSheet, View, Text, TouchableOpacity, Alert, ScrollView } from 'rea
 import { useRouter } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const API_URL = 'https://96eb-34-136-247-50.ngrok-free.app';
+const API_URL = 'https://1386-34-136-247-50.ngrok-free.app';
 
 const SurveyPage = () => {
   const [selectedThemes, setSelectedThemes] = useState([]);

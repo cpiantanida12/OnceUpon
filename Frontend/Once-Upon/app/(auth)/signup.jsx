@@ -4,7 +4,7 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 import { Link, useRouter } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const API_URL = 'https://96eb-34-136-247-50.ngrok-free.app';
+const API_URL = 'https://1386-34-136-247-50.ngrok-free.app';
 
 const SignUpPage = () => {
     const [firstName, setFirstName] = useState('');
