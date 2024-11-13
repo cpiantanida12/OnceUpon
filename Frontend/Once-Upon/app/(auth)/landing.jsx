@@ -5,18 +5,18 @@ import { Link } from 'expo-router';
 const LandingPage = () => {
   return (
     <View style={styles.container}>
-      <Image source={require('../assets/images/just_logo.png')} style={styles.logo} />
+      <Image source={require('../../assets/images/just_logo.png')} style={styles.logo} />
       <Text style={styles.title}>Welcome to Once Upon</Text>
       <View style={styles.buttonContainer}>
         <View style={styles.buttonWrapper}>
-          <Link href="/login" asChild>
+          <Link href="/(auth)/login" asChild>
             <TouchableOpacity style={styles.button}>
               <Text style={styles.buttonText}>Login</Text>
             </TouchableOpacity>
           </Link>
         </View>
         <View style={styles.buttonWrapper}>
-          <Link href="/signup" asChild>
+          <Link href="/(auth)/signup" asChild>
             <TouchableOpacity style={styles.button}>
               <Text style={styles.buttonText}>Sign Up</Text>
             </TouchableOpacity>

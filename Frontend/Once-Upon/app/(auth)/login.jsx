@@ -1,13 +1,18 @@
+// app/(auth)/login.jsx
 import React, { useState } from 'react';
-import { StyleSheet, View, Image, Text, TextInput, TouchableOpacity, Alert } from 'react-native';
+import { StyleSheet, View, Image, Text, TextInput, TouchableOpacity, Alert, ActivityIndicator } from 'react-native';
 import { Link, useRouter } from 'expo-router';
-import { useUser } from './userContext';
+import { useUser } from '../../UserContext.jsx';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+const API_URL = 'https://1386-34-136-247-50.ngrok-free.app';
 
 const LoginPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
   const router = useRouter();
-  const { setUserID } = useUser();
+  const { updateUserEmail } = useUser();
 
   const handleLogin = async () => {
     if (!email || !password) {
@@ -15,8 +20,10 @@ const LoginPage = () => {
       return;
     }
 
+    setLoading(true);
+
     try {
-      const response = await fetch('http://10.0.2.2:5000/login', {
+      const response = await fetch(`${API_URL}/auth/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -26,26 +33,63 @@ const LoginPage = () => {
           password: password,
         }),
       });
-  
+
       const data = await response.json();
-  
+
       if (response.ok) {
-        console.log('userID:', data._id);
-        setUserID(data._id);
-        router.replace('/browse');
+        // Store all necessary auth data
+        await Promise.all([
+          AsyncStorage.setItem('jwt_token', data.token),
+          AsyncStorage.setItem('user_email', email),
+          updateUserEmail(email)
+        ]);
+
+        console.log('Login successful:', {
+          email: email,
+          tokenExists: !!data.token
+        });
+
+        router.replace('/(tabs)/browse');
       } else {
-        Alert.alert('Login Failed', data.error || 'Invalid email or password.');
+        let errorMessage = 'An unexpected error occurred.';
+        
+        switch (response.status) {
+          case 401:
+            errorMessage = 'Invalid email or password.';
+            break;
+          case 404:
+            errorMessage = 'Server not found.';
+            break;
+          case 422:
+            errorMessage = 'Invalid email format.';
+            break;
+          default:
+            errorMessage = data.error || errorMessage;
+        }
+        
+        Alert.alert('Login Failed', errorMessage);
       }
     } catch (error) {
-      console.error('Error:', error);
-      Alert.alert('Error', 'An error occurred while connecting to the server.');
+      console.error('Login error:', error);
+      Alert.alert(
+        'Connection Error',
+        'Unable to connect to the server. Please check your internet connection.'
+      );
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
     <View style={styles.container}>
-      <Image source={require('../assets/images/just_logo.png')} style={styles.logo} />
+      <Image 
+        source={require('../../assets/images/just_logo.png')} 
+        style={styles.logo}
+        resizeMode="contain"
+      />
+      
       <Text style={styles.title}>Login to Your Account</Text>
+      
       <View style={styles.inputContainer}>
         <Text style={styles.label}>Email</Text>
         <TextInput
@@ -54,7 +98,11 @@ const LoginPage = () => {
           onChangeText={setEmail}
           placeholder="Enter your email"
           keyboardType="email-address"
+          autoCapitalize="none"
+          autoComplete="email"
+          editable={!loading}
         />
+        
         <Text style={styles.label}>Password</Text>
         <TextInput
           style={styles.input}
@@ -62,16 +110,31 @@ const LoginPage = () => {
           onChangeText={setPassword}
           placeholder="Enter your password"
           secureTextEntry
+          autoCapitalize="none"
+          autoComplete="password"
+          editable={!loading}
         />
       </View>
+
       <View style={styles.buttonContainer}>
-        <TouchableOpacity style={styles.button} onPress={handleLogin}>
-          <Text style={styles.buttonText}>Login</Text>
+        <TouchableOpacity 
+          style={[styles.button, loading && styles.buttonDisabled]}
+          onPress={handleLogin}
+          disabled={loading}
+        >
+          {loading ? (
+            <ActivityIndicator color="#fff" />
+          ) : (
+            <Text style={styles.buttonText}>Login</Text>
+          )}
         </TouchableOpacity>
       </View>
+
       <Text style={styles.signUpText}>
         Don't have an account?
-        <Link href="/signup" style={styles.linkText}> Sign up</Link>
+        <Link href="/(auth)/signup" style={[styles.linkText, loading && styles.linkDisabled]}>
+          {' '}Sign up
+        </Link>
       </Text>
     </View>
   );
@@ -127,6 +190,10 @@ const styles = StyleSheet.create({
     marginVertical: 10,
     width: '80%',
     alignItems: 'center',
+    minHeight: 54, // Ensure consistent height with loading state
+  },
+  buttonDisabled: {
+    backgroundColor: '#9e9e9e',
   },
   buttonText: {
     color: '#fff',
@@ -141,6 +208,9 @@ const styles = StyleSheet.create({
     color: '#6200ea',
     fontWeight: 'bold',
   },
+  linkDisabled: {
+    color: '#9e9e9e',
+  }
 });
 
 export default LoginPage;

@@ -1,20 +1,48 @@
-import React, { createContext, useState, useContext } from 'react';
+import React, { createContext, useContext, useState, useEffect } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-// Create the UserContext
 const UserContext = createContext();
 
-// Create a provider component
-export const UserProvider = ({ children }) => {
-  const [userID, setUserID] = useState(null); // State to store userID
+export function UserProvider({ children }) {
+  const [userEmail, setUserEmail] = useState(null);
+
+  useEffect(() => {
+    // Load user email from AsyncStorage on app start
+    const loadUserEmail = async () => {
+      try {
+        const email = await AsyncStorage.getItem('user_email');
+        if (email) setUserEmail(email);
+      } catch (error) {
+        console.error('Error loading user email:', error);
+      }
+    };
+    loadUserEmail();
+  }, []);
+
+  const updateUserEmail = async (email) => {
+    try {
+      if (email) {
+        await AsyncStorage.setItem('user_email', email);
+      } else {
+        await AsyncStorage.removeItem('user_email');
+      }
+      setUserEmail(email);
+    } catch (error) {
+      console.error('Error updating user email:', error);
+    }
+  };
 
   return (
-    <UserContext.Provider value={{ userID, setUserID }}>
+    <UserContext.Provider value={{ userEmail, updateUserEmail }}>
       {children}
     </UserContext.Provider>
   );
-};
+}
 
-// Custom hook to use the UserContext
-export const useUser = () => {
-  return useContext(UserContext);
-};
+export function useUser() {
+  const context = useContext(UserContext);
+  if (!context) {
+    throw new Error('useUser must be used within a UserProvider');
+  }
+  return context;
+}

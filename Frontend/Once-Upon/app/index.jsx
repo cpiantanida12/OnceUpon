@@ -1,30 +1,38 @@
-import React, { useEffect } from 'react';
-import { View, Image, StyleSheet } from 'react-native';
-import { UserProvider } from './userContext';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'expo-router';
+import { useUser } from '../UserContext';
+import { View, Image, StyleSheet, ActivityIndicator } from 'react-native';
 
-// SplashScreen component
-const SplashScreen = () => {
+export default function Index() {
   const router = useRouter();
+  const { userEmail } = useUser();
+  const [showSplash, setShowSplash] = useState(true);
 
   useEffect(() => {
-    setTimeout(() => {
-      router.push('/landing');
+    const splashTimer = setTimeout(() => {
+      setShowSplash(false);
+      if (userEmail) {
+        router.replace('/(tabs)/browse');
+      } else {
+        router.replace('/(auth)/landing');
+      }
     }, 3000);
-  }, [router]);
+
+    return () => clearTimeout(splashTimer);
+  }, [userEmail]);
 
   return (
     <View style={styles.container}>
-      <Image source={require('../assets/images/just_logo.png')} style={styles.logo} />
+      {showSplash ? (
+        <Image 
+          source={require('../assets/images/just_logo.png')}
+          style={styles.logo}
+          resizeMode="contain"
+        />
+      ) : (
+        <ActivityIndicator size="large" color="#6200ea" />
+      )}
     </View>
-  );
-};
-
-export default function App() {
-  return (
-    <UserProvider>
-      <SplashScreen />
-    </UserProvider>
   );
 }
 
@@ -33,7 +41,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#fff',
+    backgroundColor: '#ebf9ff',
   },
   logo: {
     width: 200,
