@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   StyleSheet,
   View,
@@ -10,16 +10,19 @@ import {
   Modal,
   Button,
 } from "react-native";
+import { useRouter } from 'expo-router';
+import { useUser } from '../../UserContext';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const genres = [
+const API_URL = 'https://af93-34-31-253-220.ngrok-free.app';
+
+let genres = [
   "Teamwork",
   "Adventure",
   "Friendship",
   "Self-Discovery",
   "Problem-Solving",
 ];
-
-import { useRouter } from 'expo-router';
 
 const books = [
   {
@@ -228,7 +231,59 @@ const books = [
 const BrowseScreen = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedBook, setSelectedBook] = useState(null);
+  const [orderedGenres, setOrderedGenres] = useState(genres);
   const router = useRouter();
+  const { userEmail } = useUser();
+
+  useEffect(() => {
+    const fetchUserPreferences = async () => {
+      try {
+        const email = userEmail || await AsyncStorage.getItem('user_email');
+        if (!email) {
+          console.log('No user email found');
+          return;
+        }
+    
+        const token = await AsyncStorage.getItem('jwt_token');
+        console.log('Making request to:', `${API_URL}/browse/get-preferences`);
+        console.log('With email:', email);
+        console.log('Token exists:', !!token);
+    
+        const response = await fetch(`${API_URL}/browse/get-preferences`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({ email })
+        });
+    
+        console.log('Response status:', response.status);
+        console.log('Response headers:', Object.fromEntries(response.headers.entries()));
+    
+        const responseText = await response.text();
+        console.log('Raw response:', responseText);
+    
+        if (response.ok) {
+          const data = JSON.parse(responseText);
+          console.log('Parsed data:', data);
+          const userThemes = data.themes;
+    
+          if (userThemes && userThemes.length > 0) {
+            const reorderedGenres = [
+              ...userThemes.filter(theme => genres.includes(theme)),
+              ...genres.filter(genre => !userThemes.includes(genre))
+            ];
+            setOrderedGenres(reorderedGenres);
+          }
+        }
+      } catch (error) {
+        console.error('Error fetching user preferences:', error);
+      }
+    };
+
+    fetchUserPreferences();
+  }, [userEmail]);
 
   const handleImageClick = (book) => {
     setSelectedBook(book);
@@ -242,17 +297,17 @@ const BrowseScreen = () => {
 
   const handleCloseModal = () => {
     setModalVisible(false);
-    setSelectedBook(null); // Clear selected book when modal is closed
+    setSelectedBook(null);
   };
 
   return (
     <ScrollView style={styles.container}>
-      {genres.map((genre, index) => (
+      {orderedGenres.map((genre, index) => (
         <View key={genre} style={styles.genreSection}>
           <Text style={styles.genreTitle}>{genre}</Text>
           <FlatList
             horizontal
-            data={books.slice(index * 5, index * 5 + 5)}
+            data={books.filter(book => book.theme === genre)}
             renderItem={({ item }) => (
               <TouchableOpacity onPress={() => handleImageClick(item)}>
                 <View style={styles.bookContainer}>
@@ -270,7 +325,7 @@ const BrowseScreen = () => {
         </View>
       ))}
 
-{selectedBook && (
+      {selectedBook && (
         <Modal
           animationType="slide"
           transparent={true}
@@ -279,7 +334,6 @@ const BrowseScreen = () => {
         >
           <View style={styles.modalContainer}>
             <View style={styles.modalContent}>
-              {/* Close button positioned at the top right */}
               <TouchableOpacity onPress={handleCloseModal} style={styles.closeButton}>
                 <Text style={styles.closeButtonText}>X</Text>
               </TouchableOpacity>

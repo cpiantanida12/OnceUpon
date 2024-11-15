@@ -5,7 +5,7 @@ import { MaterialIcons } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const API_URL = 'https://1386-34-136-247-50.ngrok-free.app';
+const API_URL = 'https://af93-34-31-253-220.ngrok-free.app';
 
 export default function BuildScreen() {
   const router = useRouter();
@@ -344,7 +344,7 @@ export default function BuildScreen() {
           style={styles.input}
           value={inputText}
           onChangeText={setInputText}
-          placeholder="Type your message..."
+          placeholder="What would you like to read about today?"
           multiline
           maxLength={500}
           editable={!loading}
