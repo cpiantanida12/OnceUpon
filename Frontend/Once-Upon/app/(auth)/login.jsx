@@ -29,7 +29,7 @@ const LoginPage = () => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Accept': 'application/json', // Add this
+          'Accept': 'application/json',
         },
         body: JSON.stringify({
           email: email,
@@ -136,8 +136,8 @@ const LoginPage = () => {
           style={[styles.button, loading && styles.buttonDisabled]}
           onPress={handleLogin}
           disabled={loading}
-          role="button" // Add this for web accessibility
-          tabIndex={0}  // Add this for web accessibility
+          role="button"
+          tabIndex={0}
         >
           {loading ? (
             <ActivityIndicator color="#fff" />
@@ -208,8 +208,8 @@ const styles = StyleSheet.create({
     width: '80%',
     alignItems: 'center',
     minHeight: 54,
-    cursor: 'pointer', // Add this for web
-    userSelect: 'none', // Ensure consistent height with loading state
+    cursor: 'pointer',
+    userSelect: 'none',
   },
   buttonDisabled: {
     backgroundColor: '#9e9e9e',
