@@ -19,37 +19,52 @@ const LoginPage = () => {
       Alert.alert('Invalid Input', 'Please enter both email and password.');
       return;
     }
-
+  
     setLoading(true);
-
+    console.log('Login attempt with:', { email }); // Debug log
+  
     try {
+      console.log('Making request to:', `${API_URL}/auth/login`); // Debug log
       const response = await fetch(`${API_URL}/auth/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Accept': 'application/json',
         },
         body: JSON.stringify({
           email: email,
           password: password,
         }),
       });
-
-      const data = await response.json();
-
+  
+      console.log('Response status:', response.status); // Debug log
+  
+      // Get response text first for debugging
+      const responseText = await response.text();
+      console.log('Raw response:', responseText);
+  
+      // Try to parse JSON
+      let data;
+      try {
+        data = JSON.parse(responseText);
+      } catch (e) {
+        console.error('Error parsing response:', e);
+        throw new Error('Invalid response format from server');
+      }
+  
       if (response.ok) {
-        // Store all necessary auth data
-        await Promise.all([
-          AsyncStorage.setItem('jwt_token', data.token),
-          AsyncStorage.setItem('user_email', email),
-          updateUserEmail(email)
-        ]);
-
-        console.log('Login successful:', {
-          email: email,
-          tokenExists: !!data.token
-        });
-
-        router.replace('/(tabs)/browse');
+        console.log('Login successful, storing data...'); // Debug log
+        try {
+          await AsyncStorage.setItem('jwt_token', data.token);
+          await AsyncStorage.setItem('user_email', email);
+          await updateUserEmail(email);
+  
+          console.log('Data stored, navigating...'); // Debug log
+          router.replace('/(tabs)/browse');
+        } catch (storageError) {
+          console.error('Storage error:', storageError);
+          Alert.alert('Error', 'Failed to save login information');
+        }
       } else {
         let errorMessage = 'An unexpected error occurred.';
         
@@ -121,6 +136,8 @@ const LoginPage = () => {
           style={[styles.button, loading && styles.buttonDisabled]}
           onPress={handleLogin}
           disabled={loading}
+          role="button"
+          tabIndex={0}
         >
           {loading ? (
             <ActivityIndicator color="#fff" />
@@ -190,10 +207,13 @@ const styles = StyleSheet.create({
     marginVertical: 10,
     width: '80%',
     alignItems: 'center',
-    minHeight: 54, // Ensure consistent height with loading state
+    minHeight: 54,
+    cursor: 'pointer',
+    userSelect: 'none',
   },
   buttonDisabled: {
     backgroundColor: '#9e9e9e',
+    cursor: 'not-allowed',
   },
   buttonText: {
     color: '#fff',
