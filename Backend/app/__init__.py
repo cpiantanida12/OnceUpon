@@ -16,7 +16,7 @@ def create_app():
     app = Flask(__name__)
     
     # Set JWT secret key (from .env)
-    app.config['JWT_SECRET_KEY'] = shwXy/xIupBsxCMqUKt8IUw/SlbNpms0TfYAflKDZiw=
+    app.config['JWT_SECRET_KEY'] = "shwXy/xIupBsxCMqUKt8IUw/SlbNpms0TfYAflKDZiw="
     app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(hours=24)
     
     # Initialize JWT Manager
