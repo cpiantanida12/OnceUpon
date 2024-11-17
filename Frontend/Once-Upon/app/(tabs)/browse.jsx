@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   StyleSheet,
   View,
@@ -21,6 +21,9 @@ const genres = [
 ];
 
 import { useRouter } from 'expo-router';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+const API_URL = 'https://9e64-34-45-26-56.ngrok-free.app';
 
 const books = [
   {
@@ -285,7 +288,7 @@ const books = [
   {
     id: 36,
     title: "The River of Echoes",
-    theme: "Teamwork",
+    theme: "Self-Discovery",
     image: require("../../assets/images/browse-page-images/river_echoes.jpg"),
     summary: "Kai, a timid otter, hears tales about the River of Echoes—a place where voices from the past can be heard, guiding those brave enough to listen. When his village faces a problem that no one can solve, Kai decides to find the river and uncover its wisdom. Along the journey, Kai navigates rushing currents, eerie caves, and strange echoes that seem to know his fears. With each challenge, he grows a little stronger, but will he find the courage to face the biggest obstacle of all—believing in himself? What secrets will the river reveal to Kai?"
   },
@@ -425,7 +428,7 @@ const books = [
     id: 54,
     title: "Grandma's Secret Recipe",
     theme: "Family",
-    image: require("../../assets/images/browse-page-images/grandma_secret_recipe"),
+    image: require("../../assets/images/browse-page-images/grandma_secret_recipe.jpg"),
     summary: "Sophie loved spending weekends at Grandma Lily’s house, especially when it was time to bake. One rainy afternoon, Grandma decided it was the perfect day to teach Sophie her secret recipe for the most delicious cinnamon rolls. As they measured flour, cracked eggs, and mixed the dough, Grandma shared stories from her own childhood, telling Sophie how baking was always a special way to connect with family. But when the dough doesn’t rise as expected, Sophie starts to worry the recipe might be ruined. With Grandma's patience and a bit of creativity, they come up with a new solution. By the end of the day, not only do they bake the most amazing cinnamon rolls, but Sophie discovers that the true secret recipe isn’t just the ingredients—it’s the love and memories passed down with every batch."
   }
 ];
@@ -433,7 +436,58 @@ const books = [
 const BrowseScreen = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedBook, setSelectedBook] = useState(null);
+  const [orderedGenres, setOrderedGenres] = useState(genres);
   const router = useRouter();
+
+  useEffect(() => {
+    const fetchUserPreferences = async () => {
+      try {
+        const email = await AsyncStorage.getItem('user_email');
+        if (!email) {
+          console.log('No user email found');
+          return;
+        }
+    
+        const token = await AsyncStorage.getItem('jwt_token');
+        console.log('Making request to:', `${API_URL}/browse/get-preferences`);
+        console.log('With email:', email);
+        console.log('Token exists:', !!token);
+    
+        const response = await fetch(`${API_URL}/browse/get-preferences`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({ email })
+        });
+    
+        console.log('Response status:', response.status);
+        console.log('Response headers:', Object.fromEntries(response.headers.entries()));
+    
+        const responseText = await response.text();
+        console.log('Raw response:', responseText);
+    
+        if (response.ok) {
+          const data = JSON.parse(responseText);
+          console.log('Parsed data:', data);
+          const userThemes = data.themes;
+    
+          if (userThemes && userThemes.length > 0) {
+            const reorderedGenres = [
+              ...userThemes.filter(theme => genres.includes(theme)),
+              ...genres.filter(genre => !userThemes.includes(genre))
+            ];
+            setOrderedGenres(reorderedGenres);
+          }
+        }
+      } catch (error) {
+        console.error('Error fetching user preferences:', error);
+      }
+    };
+
+    fetchUserPreferences(); // Call it once when component mounts
+  }, []);
 
   const handleImageClick = (book) => {
     setSelectedBook(book);
@@ -447,17 +501,18 @@ const BrowseScreen = () => {
 
   const handleCloseModal = () => {
     setModalVisible(false);
-    setSelectedBook(null); // Clear selected book when modal is closed
+    setSelectedBook(null);
   };
+
 
   return (
     <ScrollView style={styles.container}>
-      {genres.map((genre, index) => (
+      {orderedGenres.map((genre, index) => (
         <View key={genre} style={styles.genreSection}>
           <Text style={styles.genreTitle}>{genre}</Text>
           <FlatList
             horizontal
-            data={books.slice(index * 9, index * 9 + 9)}
+            data={books.filter(book => book.theme === genre)}
             renderItem={({ item }) => (
               <TouchableOpacity onPress={() => handleImageClick(item)}>
                 <View style={styles.bookContainer}>
