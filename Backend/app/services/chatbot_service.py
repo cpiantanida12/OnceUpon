@@ -1,20 +1,23 @@
 from langchain.prompts import PromptTemplate
-from langchain_google_vertexai import VertexAI
+from langchain.llms import VertexAI
 from langchain.chains import LLMChain
 import vertexai
-from vertexai.preview.generative_models import GenerativeModel
+from vertexai.preview.generative_models import GenerativeModel, ChatSession
 import re
-from transformers import pipeline
 
-vertexai.init(project='adsp-capstone-once-upon', location = 'us-central1')
-llm = VertexAI(model_name="gemini-1.0-pro", max_output_tokens=8192, max_tokens = 32000)
-summarizer = pipeline("summarization", model="sshleifer/distilbart-cnn-12-6")
+# Initialize Vertex AI
+vertexai.init(project='adsp-capstone-once-upon', location='us-central1')
+# Initialize the LLM
+llm = VertexAI(model_name="gemini-1.5-flash", max_output_tokens=8192, max_tokens=300000)
 
-# Define prompt template for the summary
+# Simulated database to hold session data
+session_data = {}
+
+# Define prompt templates
 summary_prompt_template = PromptTemplate(
     input_variables=["input_prompt", "user_age"],
     template="""
-    Generate a complete summary for a 3-chapter story that is engaging and appropriately written for a {user_age}-year-old child. The story should be about: {input_prompt}
+    Generate a complete summary for a 3-chapter story that is engaging for a {user_age}-year-old child. The story should be about: {input_prompt}
     Your response must include:
     1. A brief introduction to the story
     2. Chapter 1 summary (at least 100 words)
@@ -32,45 +35,6 @@ summary_prompt_template = PromptTemplate(
     """
 )
 
-# Create LLMChain for summary generation
-summary_chain = LLMChain(llm=llm, prompt=summary_prompt_template)
-
-def generate_summary(input_prompt, user_age):
-    while True:
-        summary = summary_chain.run(input_prompt=input_prompt, user_age=user_age)
-        return summary
-
-modifications_prompt_template = PromptTemplate(
-    input_variables=["user_modifications", "user_age", "prev_summary", "chat_history"],
-    template="""
-    Generate a complete summary for a 3-chapter story that is engaging and appropriately written for a {user_age}-year-old child. The story should be strictly based off of this other story summary: {prev_summary}
-    Please take that old summary and generate a new summary that implements these changes: {user_modifications}
-    Also, here is the chat history of your exchange with them so you can keep their desired story modifications consistent: {chat_history}
-    Your response must include:
-    1. A brief introduction to the story
-    2. Chapter 1 summary (at least 100 words)
-    3. Chapter 2 summary (at least 100 words)
-    4. Chapter 3 summary (at least 100 words)
-    Format your response as follows:
-    Story Introduction: [Your introduction here]
-    Chapter 1: [Title]
-    [Chapter 1 summary]
-    Chapter 2: [Title]
-    [Chapter 2 summary]
-    Chapter 3: [Title]
-    [Chapter 3 summary]
-    Ensure each chapter summary is complete and shows a clear progression of the story.
-    """
-)
-
-# Create LLMChain for summary generation
-modifications_chain = LLMChain(llm=llm, prompt=modifications_prompt_template)
-    
-def generate_modified_summary(user_modifications, user_age, prev_summary, chat_history):
-    summary = modifications_chain.run(user_modifications=user_modifications, user_age=user_age, prev_summary=prev_summary, chat_history=chat_history)
-    return summary
-
-# Define updated prompt template for chapter generation
 chapter_prompt_template = PromptTemplate(
     input_variables=["chapter_title", "previous_summary", "chapter_summary", "characters", "chapter_number", "user_age"],
     template=(
@@ -85,21 +49,6 @@ chapter_prompt_template = PromptTemplate(
     )
 )
 
-# Create LLMChain for chapter generation
-chapter_chain = LLMChain(llm=llm, prompt=chapter_prompt_template)
-
-def generate_chapter(chapter_title, previous_summary, chapter_summary, characters, chapter_number, user_age):
-    chapter = chapter_chain.run(
-        chapter_title=chapter_title,
-        previous_summary=previous_summary,
-        chapter_summary=chapter_summary,
-        characters=characters,
-        chapter_number=chapter_number,
-        user_age=user_age
-    )
-    return chapter
-
-# Add this new prompt template for character extraction
 character_extraction_prompt = PromptTemplate(
     input_variables=["story_text"],
     template="""
@@ -112,33 +61,181 @@ character_extraction_prompt = PromptTemplate(
     """
 )
 
-# Create LLMChain for character extraction
-character_extraction_chain = LLMChain(llm=llm, prompt=character_extraction_prompt)
+# Define the Gemini-based summarization prompt
+chapter_summary_prompt_template = PromptTemplate(
+    input_variables=["chapter_text"],
+    template="""
+    Summarize the following chapter text in 100-150 words:
 
-# Add character extraction function
-# Update the extract_characters function
+    {chapter_text}
+    """
+)
+
+# LLM Chains
+summary_chain = LLMChain(llm=llm, prompt=summary_prompt_template)
+chapter_chain = LLMChain(llm=llm, prompt=chapter_prompt_template)
+character_extraction_chain = LLMChain(llm=llm, prompt=character_extraction_prompt)
+chapter_summary_chain = LLMChain(llm=llm, prompt=chapter_summary_prompt_template)
+
+# Functions
+def generate_summary(input_prompt, user_age):
+    summary = summary_chain.run(input_prompt=input_prompt, user_age=user_age)
+    return summary
+
+def generate_chapter(chapter_title, previous_summary, chapter_summary, characters, chapter_number, user_age):
+    chapter = chapter_chain.run(
+        chapter_title=chapter_title,
+        previous_summary=previous_summary,
+        chapter_summary=chapter_summary,
+        characters=characters,
+        chapter_number=chapter_number,
+        user_age=user_age
+    )
+    return chapter
+
 def extract_characters(input_story):
     characters = character_extraction_chain.run(story_text=input_story)
     return characters
 
-def generate_story_in_chapters(summary_object, user_age):
-    chapters = re.split(r'Chapter \d+:', summary_object)[1:]
+def summarize_chapter(chapter_text):
+    summary = chapter_summary_chain.run(chapter_text=chapter_text)
+    return summary
+
+# Stateless API functions
+def start_story(input_prompt, user_id, user_age):
+    session_id = user_id
+    summary = generate_summary(input_prompt, user_age)
+    
+    # Save the summary in "database" (session data)
+    session_data[session_id] = {
+        "user_age": user_age,
+        "summary": summary,
+        "chapters": [],
+        "modifications": 0
+    }
+    
+    return summary
+
+def generate_chapter_api(session_id, chapter_number):
+    session = session_data.get(session_id)
+    if not session:
+        return {"error": "Invalid session ID"}
+    
+    # Retrieve summary and other session data
+    user_age = session["user_age"]
+    summary_text = session["summary"]
+    previous_chapters = session["chapters"]
+    
+    # Split the summary to get each chapter outline
+    chapters = re.split(r'Chapter \d+:', summary_text)[1:]
     if len(chapters) != 3:
-        raise ValueError("The summary does not contain exactly 3 chapters.")
+        return {"error": "The summary does not contain exactly 3 chapters."}
     
-    chapter_structures = [f"Chapter {i+1}:{chapter}" for i, chapter in enumerate(chapters)]
+    chapter_summary = chapters[chapter_number - 1].strip()
+    chapter_title = f"Chapter {chapter_number}: {chapter_summary.splitlines()[0]}"
     
-    # Generate Chapter 1
-    chapter1 = generate_chapter(chapter_structures[0].split(':')[1].strip(), "", chapters[0], "", 1, user_age)
-    characters = extract_characters(chapter1)
-    chapter1_summary = summarizer(chapter1, max_length=150, min_length=30, do_sample=False)[0]['summary_text']
+    if chapter_number == 1:
+        previous_summary = ""
+        characters = ""
+    else:
+        previous_summary = "\n".join([summarize_chapter(chap) for chap in previous_chapters])
+        characters = extract_characters(previous_summary)
     
-    # Generate Chapter 2
-    chapter2 = generate_chapter(chapter_structures[1].split(':')[1].strip(), chapter1_summary, chapters[1], characters, 2, user_age)
-    chapter2_summary = summarizer(chapter2, max_length=150, min_length=30, do_sample=False)[0]['summary_text']
+    chapter_text = generate_chapter(
+        chapter_title=chapter_title,
+        previous_summary=previous_summary,
+        chapter_summary=chapter_summary,
+        characters=characters,
+        chapter_number=chapter_number,
+        user_age=user_age
+    )
     
-    # Generate Chapter 3
-    previous_summary = f"Chapter 1: {chapter1_summary}\nChapter 2: {chapter2_summary}"
-    chapter3 = generate_chapter(chapter_structures[2].split(':')[1].strip(), previous_summary, chapters[2], characters, 3, user_age)
+    # Summarize and save chapter text
+    chapter_summary = summarize_chapter(chapter_text)
+    session["chapters"].append(f"{chapter_title}\n\n{chapter_text}")
     
-    return chapter1, chapter2, chapter3
+    return {"chapter_text": chapter_text, "chapter_summary": chapter_summary, "characters": characters}
+
+def continue_story(session_id):
+    session = session_data.get(session_id)
+    if not session:
+        return {"error": "Invalid session ID"}
+    
+    # Combine chapters with titles and numbers in the full story
+    chapters_text = "\n\n".join(session["chapters"])
+    session_data[session_id] = {}
+    return chapters_text
+
+def modify_summary(session_id, modification_request):
+    existing_summary = session_data[session_id]["summary"]
+    user_age = session_data[session_id]["user_age"]
+    # Uses an LLM to adjust the summary according to the modification request
+    modification_prompt_template = PromptTemplate(
+        input_variables=["existing_summary", "modification_request", "user_age"],
+        template="""
+        Based on the story summary provided below, make the following modifications:
+        Existing Summary: {existing_summary}
+        Modification Request: {modification_request}
+        The modified story should still be appropriate for a {user_age}-year-old child.
+        Return only the modified story summary.
+        """
+    )
+    modification_chain = LLMChain(llm=llm, prompt=modification_prompt_template)
+    modified_summary = modification_chain.run(existing_summary=existing_summary, modification_request=modification_request, user_age=user_age)
+    session_data[session_id]["summary"] = modified_summary
+    session_data[session_id]["modifications"] = session_data[session_id]["modifications"] + 1
+    return modified_summary
+
+def clear_session(session_id):
+    session_data[session_id] = {}
+
+# Interactive Loop to input the prompt and confirm the summary
+def interactive_main(user_age, current_prompt=None, current_summary=None, session_id=None):
+    # If no current summary exists, initialize the story prompt and generate the initial summary
+    if current_summary is None:
+        # Get the initial prompt from the user
+        current_prompt = input("Enter the story prompt: ")
+        summary_response = start_story(current_prompt, user_age)
+        session_id = summary_response["session_id"]
+        current_summary = summary_response["summary"]
+    
+        # Print the current summary and ask for user confirmation
+        print("\nCurrent Story Summary:")
+        print(current_summary)
+    
+    modify_or_continue = input("\nAre you happy with this summary? (yes/no): ").strip().lower()
+
+    if modify_or_continue == "no":
+        # Ask if they want a completely new story or just modify the existing one
+        question = input("Do you want a new story or make changes to this storyline? (NEW STORY/MODIFY): ").strip().upper()
+        
+        if question == "MODIFY":
+            # Get modification request and adjust the summary based on it
+            modification_request = input("\nDescribe the changes you want to make to the storyline: ")
+            modified_summary_response = modify_summary(current_summary, modification_request, user_age)
+            modified_summary = modified_summary_response["summary"]
+            
+            # Print modified summary and ask if user is satisfied
+            print("\nModified Story Summary:")
+            print(modified_summary)
+            
+            # Recursive call with modified summary for further confirmation
+            return interactive_main(user_age, current_prompt, modified_summary, session_id)
+        
+        elif question == "NEW STORY":
+            # Start over with a new prompt by recursively calling the main function
+            print("Restarting with new story prompt...")
+            return interactive_main(user_age)
+
+    # Generate chapters if user is happy with the summary
+    for chapter_number in range(1, 4):
+        chapter_response = generate_chapter_api(session_id, chapter_number)
+        # print(f"\nChapter {chapter_number} Text:")
+        # print(chapter_response["chapter_text"])
+        # print(f"\nChapter {chapter_number} Summary:")
+        # print(chapter_response["chapter_summary"])
+
+    # Compile and display the full story
+    full_story_response = continue_story(session_id)
+    print("\nFull Story:")
+    print(full_story_response["full_story"])

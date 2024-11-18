@@ -4,7 +4,7 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 import { Link, useRouter } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const API_URL = 'https://af93-34-31-253-220.ngrok-free.app';
+const API_URL = 'https://b353-35-202-168-65.ngrok-free.app';
 
 const SignUpPage = () => {
     const [firstName, setFirstName] = useState('');
@@ -22,15 +22,27 @@ const SignUpPage = () => {
 
     const handleCreateAccount = async () => {
       if (!firstName || !lastName) {
-        Alert.alert('Missing Information', 'Please enter both first and last names.');
+        if (Platform.OS === 'web') {
+          alert('Please enter both first and last names.');
+        } else {
+          Alert.alert('Missing Information', 'Please enter both first and last names.');
+        }
         return;
       }
       if (!validateEmail(email)) {
-        Alert.alert('Invalid Email', 'Please enter a valid email address.');
+        if (Platform.OS === 'web') {
+          alert('Please enter a valid email address.');
+        } else {
+          Alert.alert('Invalid Email', 'Please enter a valid email address.');
+        }
         return;
       }
       if (password.length < 6) {
-        Alert.alert('Weak Password', 'Password must be at least 6 characters long.');
+        if (Platform.OS === 'web') {
+          alert('Password must be at least 6 characters long.');
+        } else {
+          Alert.alert('Weak Password', 'Password must be at least 6 characters long.');
+        }
         return;
       }
 
@@ -39,7 +51,9 @@ const SignUpPage = () => {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
+            'Accept': 'application/json',
           },
+          credentials: 'include',
           body: JSON.stringify({
             email: email,
             password: password,
@@ -52,32 +66,100 @@ const SignUpPage = () => {
         const data = await response.json();
 
         if (response.ok) {
-          // Save email to Async Storage
-          await AsyncStorage.setItem('userEmail', email);
+          if (Platform.OS === 'web') {
+            localStorage.setItem('userEmail', email);
+          } else {
+            await AsyncStorage.setItem('userEmail', email);
+          }
           
-          Alert.alert('Success', 'Account created successfully!');
+          if (Platform.OS === 'web') {
+            alert('Account created successfully!');
+          } else {
+            Alert.alert('Success', 'Account created successfully!');
+          }
           router.push('/(auth)/survey');
         } else {
-          Alert.alert('Error', data.error || 'An error occurred during account creation.');
+          if (Platform.OS === 'web') {
+            alert(data.error || 'An error occurred during account creation.');
+          } else {
+            Alert.alert('Error', data.error || 'An error occurred during account creation.');
+          }
         }
       } catch (error) {
         console.error('Error:', error);
-        Alert.alert('Error', 'An error occurred while connecting to the server.');
+        if (Platform.OS === 'web') {
+          alert('An error occurred while connecting to the server.');
+        } else {
+          Alert.alert('Error', 'An error occurred while connecting to the server.');
+        }
       }
     };
 
     const handleDateChange = (event, selectedDate) => {
-      const currentDate = selectedDate || dateOfBirth;
-      setShowDatePicker(Platform.OS === 'ios');
-      setDateOfBirth(currentDate);
+      if (Platform.OS === 'web') {
+        // For web, handle the input change directly
+        const newDate = new Date(event.target.value);
+        setDateOfBirth(newDate);
+      } else {
+        // For mobile, handle the DateTimePicker change
+        const currentDate = selectedDate || dateOfBirth;
+        setShowDatePicker(Platform.OS === 'ios');
+        setDateOfBirth(currentDate);
+      }
     };
 
     const formatDate = (date) => {
+      // For web input, we need YYYY-MM-DD format
+      if (Platform.OS === 'web') {
+        return date.toISOString().split('T')[0];
+      }
+      // For mobile display, use more readable format
       return date.toLocaleDateString('en-US', {
         year: 'numeric',
         month: 'long',
         day: 'numeric',
       });
+    };
+
+    const renderDatePicker = () => {
+      if (Platform.OS === 'web') {
+        return (
+          <input
+            type="date"
+            value={formatDate(dateOfBirth)}
+            onChange={handleDateChange}
+            max={formatDate(new Date())}
+            style={{
+              height: 40,
+              borderColor: '#ccc',
+              borderWidth: 1,
+              borderRadius: 5,
+              marginBottom: 20,
+              paddingHorizontal: 10,
+              backgroundColor: '#fff',
+              width: '100%',
+              padding: '0 10px',
+            }}
+          />
+        );
+      }
+
+      return (
+        <>
+          <TouchableOpacity onPress={() => setShowDatePicker(true)} style={styles.input}>
+            <Text>{formatDate(dateOfBirth)}</Text>
+          </TouchableOpacity>
+          {showDatePicker && (
+            <DateTimePicker
+              value={dateOfBirth}
+              mode="date"
+              display="default"
+              onChange={handleDateChange}
+              maximumDate={new Date()}
+            />
+          )}
+        </>
+      );
     };
 
     return (
@@ -116,18 +198,7 @@ const SignUpPage = () => {
               secureTextEntry
           />
           <Text style={styles.label}>Date of Birth</Text>
-          <TouchableOpacity onPress={() => setShowDatePicker(true)} style={styles.input}>
-            <Text>{formatDate(dateOfBirth)}</Text>
-          </TouchableOpacity>
-          {showDatePicker && (
-            <DateTimePicker
-              value={dateOfBirth}
-              mode="date"
-              display="default"
-              onChange={handleDateChange}
-              maximumDate={new Date()}
-            />
-          )}
+          {renderDatePicker()}
         </View>
 
         <View style={styles.buttonContainer}>

@@ -23,7 +23,7 @@ const genres = [
 import { useRouter } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const API_URL = 'https://9e64-34-45-26-56.ngrok-free.app';
+const API_URL = 'https://b353-35-202-168-65.ngrok-free.app';
 
 const books = [
   {

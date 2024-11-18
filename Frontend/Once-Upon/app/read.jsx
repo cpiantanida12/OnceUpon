@@ -15,7 +15,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Audio } from "expo-av";
 import * as FileSystem from "expo-file-system";
 
-const API_URL = "https://6659-34-41-223-142.ngrok-free.app";
+const API_URL = "https://b353-35-202-168-65.ngrok-free.app";
 const { width } = Dimensions.get("window");
 
 export default function ReadScreen() {

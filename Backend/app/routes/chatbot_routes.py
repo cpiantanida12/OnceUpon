@@ -1,14 +1,16 @@
-from flask import Blueprint, request, jsonify, send_file
+from flask import Blueprint, request, jsonify
 from flask_jwt_extended import jwt_required
 from datetime import datetime
 import re
 from app.services.chatbot_service import (
-    generate_summary, generate_modified_summary, generate_story_in_chapters
+    start_story,
+    modify_summary,
+    generate_chapter_api,
+    continue_story,
+    session_data,
+    clear_session
 )
-from app.services.firestore_service import (
-    get_conversation_state, save_conversation_state, clear_conversation,
-    save_story, get_user_age
-)
+from app.services.firestore_service import get_user_age, save_story
 from google.cloud import texttospeech
 import io
 
@@ -25,55 +27,59 @@ def chatbot_message():
         data = request.get_json()
         if not data:
             return jsonify({"error": "No data provided"}), 400
-
+            
         user_id = data.get('email')
         user_message = data.get('message')
-
+        
         if not user_id or not user_message:
             return jsonify({"error": "Missing email or message"}), 400
-
+        
+        # Get user age (default to 4 if not found or too young)
         user_age = get_user_age(user_id)
         if user_age is None or user_age < 4:
             user_age = 4
-
-        prev_summary, chat_history = get_conversation_state(user_id)
-
-        if not prev_summary:
-            response_message = generate_summary(user_message, user_age)
-            message_type = "initial_story"
-        else:
-            response_message = generate_modified_summary(user_message, user_age, prev_summary, chat_history)
-            message_type = "story_modification"
-
-        match = re.search(r":\s*(.*?)\s*##", response_message, re.DOTALL)
-        extract_intro = match.group(1).strip() if match else response_message
-        extract_intro = "\n".join([line.strip() for line in extract_intro.splitlines()])
-
-        response_message_to_user = (
-            f"How does this story sound:\n\n{extract_intro}\n\n"
-            "If you like it, press the 'Start Reading' button. "
-            "If not, let me know how I can make it better or press 'Clear' to start over!"
-        )
-
-        chat_history.append({
-            "user": user_message,
-            "bot": response_message,
-            "type": message_type,
-            "timestamp": datetime.utcnow().isoformat()
-        })
-
-        save_result = save_conversation_state(user_id, response_message, chat_history)
-        if "error" in save_result:
-            return jsonify({"error": save_result["error"]}), 500
-
-        return jsonify({
-            "response": response_message_to_user,
-            "has_story": True,
-            "message_type": message_type
-        }), 200
-
+        print(f"User age for {user_id}: {user_age}")
+        
+        try:
+            # Check if user has an existing session with a summary
+            if user_id in session_data and "summary" in session_data[user_id]:
+                response_message = modify_summary(user_id, user_message)
+            else:
+                # Start a new story if no existing summary
+                response_message = start_story(user_message, user_id, user_age)
+                # Initialize session data
+                if user_id not in session_data:
+                    session_data[user_id] = {}
+                session_data[user_id]["summary"] = response_message
+            
+            # Format response for user
+            intro = re.search(r"##\s*Intro.*?:\s*(.*?)\s*##", response_message, re.DOTALL | re.IGNORECASE)
+            extract_intro = intro.group(1).strip() if intro else response_message
+                
+            response_message_to_user = (
+                f"How does this story sound?:\n\n{extract_intro}\n\n"
+                "If you like it, press the 'Start Reading' button. "
+                "If not, let me know how I can make it better or press 'Clear' to start over!"
+            )
+            
+            return jsonify({
+                "response": response_message_to_user,
+                "has_story": True,
+            }), 200
+            
+        except Exception as e:
+            print(f"Error processing message: {str(e)}")
+            return jsonify({
+                "error": "Error processing message",
+                "details": str(e)
+            }), 500
+            
     except Exception as e:
-        return jsonify({"error": "Server error", "details": str(e)}), 500
+        print(f"Detailed error in chatbot_message: {str(e)}")
+        return jsonify({
+            "error": "Server error",
+            "details": str(e)
+        }), 500
 
 @bp.route('/generate-story', methods=['POST'])
 @jwt_required()
@@ -85,38 +91,67 @@ def generate_full_story():
     try:
         data = request.get_json()
         user_id = data.get('email')
+        
         if not user_id:
             return jsonify({"error": "Missing user ID"}), 400
-
-        prev_summary, chat_history = get_conversation_state(user_id)
-        if not prev_summary:
-            return jsonify({"error": "No story summary found"}), 404
-
+        
+        if user_id not in session_data or "summary" not in session_data[user_id]:
+            return jsonify({"error": "No story summary found"}), 400
+        
+        # Get final approved summary
+        prev_summary = session_data[user_id]["summary"]
+        
+        # Get user age for appropriate content generation
         user_age = get_user_age(user_id)
         if user_age is None or user_age < 4:
             user_age = 4
-
-        chapter1, chapter2, chapter3 = generate_story_in_chapters(prev_summary, user_age)
-
-        chapters = {"chapter1": chapter1, "chapter2": chapter2, "chapter3": chapter3}
-
-        save_result = save_story(user_id, chapters, prev_summary)
-        if "error" in save_result:
-            return jsonify(save_result), 500
-
-        clear_result = clear_conversation(user_id)
-        if "error" in clear_result:
-            print(f"Warning: Failed to clear conversation: {clear_result['error']}")
-
-        return jsonify({
-            "message": "Story generated successfully",
-            "story_id": save_result["story_id"],
-            "chapters": chapters,
-            "summary": prev_summary
-        }), 200
-
+        
+        generated_chapters = []
+        
+        try:
+            # Generate all three chapters
+            for chapter_number in range(1, 4):
+                chapter = generate_chapter_api(user_id, chapter_number)
+                generated_chapters.append(chapter)
+            
+            chapter_dict = {
+                f"chapter{i+1}": chapter 
+                for i, chapter in enumerate(generated_chapters)
+            }
+            
+            # Extract title from summary
+            title = re.search(r"##\s*Title\s*:\s*(.*?)\s*##", prev_summary, re.DOTALL | re.IGNORECASE)
+            extracted_title = title.group(1).strip() if title else "Untitled Story"
+            
+            save_result = save_story(user_id, extracted_title, chapter_dict)
+            if isinstance(save_result, dict) and "error" in save_result:
+                return jsonify(save_result), 500
+            
+            # Clean up conversation state after successful story generation
+            clear_session(user_id)
+            
+            return jsonify({
+                "message": "Story generated successfully",
+                "story_id": save_result.get("story_id", ""),  # Ensure story_id is included
+                "title": extracted_title,
+                "chapters": {  # Frontend expects this exact structure
+                    "chapter1": chapter_dict["chapter1"],
+                    "chapter2": chapter_dict["chapter2"],
+                    "chapter3": chapter_dict["chapter3"]
+                }
+            }), 200
+            
+        except Exception as e:
+            return jsonify({
+                "error": "Error generating full story",
+                "details": str(e)
+            }), 500
+            
     except Exception as e:
-        return jsonify({"error": "Server error", "details": str(e)}), 500
+        return jsonify({
+            "error": "Server error",
+            "details": str(e)
+        }), 500
 
 @bp.route('/clear', methods=['POST'])
 @jwt_required()
@@ -127,17 +162,23 @@ def clear_chat():
     try:
         data = request.get_json()
         user_id = data.get('email')
+        
         if not user_id:
             return jsonify({"error": "Missing user ID"}), 400
-
-        clear_result = clear_conversation(user_id)
-        if "error" in clear_result:
-            return jsonify(clear_result), 500
-
-        return jsonify({"message": "Conversation cleared successfully", "has_story": False}), 200
-
+        
+        # Clear conversation state
+        clear_session(user_id)
+        
+        return jsonify({
+            "message": "Conversation cleared successfully",
+            "has_story": False
+        }), 200
+        
     except Exception as e:
-        return jsonify({"error": "Error clearing conversation", "details": str(e)}), 500
+        return jsonify({
+            "error": "Error clearing conversation",
+            "details": str(e)
+        }), 500
 
 @bp.route('/read-story', methods=['POST'])
 @jwt_required()

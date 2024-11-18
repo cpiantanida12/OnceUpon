@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { StyleSheet, View, Text, TouchableOpacity, Alert } from 'react-native';
+import { Platform, StyleSheet, View, Text, TouchableOpacity, Alert } from 'react-native';
 import { useRouter } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -13,32 +13,51 @@ const AccountScreen = () => {
     setSelectedOption(option);
   };
 
-  const handleLogout = async () => {
-    Alert.alert(
-      'Logout',
-      'Are you sure you want to logout?',
-      [
-        {
-          text: 'Cancel',
-          style: 'cancel'
-        },
-        {
-          text: 'Logout',
-          onPress: async () => {
-            try {
-              // Clear all auth data
-              await AsyncStorage.multiRemove(['jwt_token', 'user_email']);
-              // Navigate to login screen
-              router.replace('/(auth)/login');
-            } catch (error) {
-              console.error('Error during logout:', error);
-              Alert.alert('Error', 'Failed to logout. Please try again.');
-            }
+  const clearAuthData = async () => {
+    try {
+      if (Platform.OS === 'web') {
+        // For web, use localStorage
+        localStorage.removeItem('jwt_token');
+        localStorage.removeItem('user_email');
+      } else {
+        // For React Native, use AsyncStorage
+        await AsyncStorage.multiRemove(['jwt_token', 'user_email']);
+      }
+      router.replace('/(auth)/login');
+    } catch (error) {
+      console.error('Error during logout:', error);
+      if (Platform.OS === 'web') {
+        alert('Failed to logout. Please try again.');
+      } else {
+        Alert.alert('Error', 'Failed to logout. Please try again.');
+      }
+    }
+  };
+
+  const handleLogout = () => {
+    if (Platform.OS === 'web') {
+      // For web, use the standard confirm dialog
+      if (window.confirm('Are you sure you want to logout?')) {
+        clearAuthData();
+      }
+    } else {
+      // For React Native, use Alert
+      Alert.alert(
+        'Logout',
+        'Are you sure you want to logout?',
+        [
+          {
+            text: 'Cancel',
+            style: 'cancel'
           },
-          style: 'destructive'
-        }
-      ]
-    );
+          {
+            text: 'Logout',
+            onPress: clearAuthData,
+            style: 'destructive'
+          }
+        ]
+      );
+    }
   };
 
   return (
@@ -57,7 +76,6 @@ const AccountScreen = () => {
           </TouchableOpacity>
         ))}
         
-        {/* Add Logout Button */}
         <TouchableOpacity
           style={styles.logoutButton}
           onPress={handleLogout}
@@ -105,7 +123,7 @@ const styles = StyleSheet.create({
   logoutButton: {
     padding: 15,
     backgroundColor: '#FF6B6B',
-    marginTop: 'auto', // This pushes the logout button to the bottom
+    marginTop: 'auto',
     borderTopWidth: 1,
     borderTopColor: '#ccc',
   },
