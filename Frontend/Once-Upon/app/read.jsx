@@ -15,69 +15,85 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Audio } from "expo-av";
 import * as FileSystem from "expo-file-system";
 
-const API_URL = "https://b353-35-202-168-65.ngrok-free.app";
+const API_URL = "https://bb65-35-226-99-239.ngrok-free.app";
 const { width } = Dimensions.get("window");
 
 export default function ReadScreen() {
-  const router = useRouter();
-  const { source } = useLocalSearchParams();
-  const [story, setStory] = useState(null);
-  const [currentChapter, setCurrentChapter] = useState(1);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const router = useRouter();
+  const { source } = useLocalSearchParams();
+  const [story, setStory] = useState(null);
+  const [currentChapter, setCurrentChapter] = useState(1);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  const [sound, setSound] = useState();
-  const [loadingAudio, setLoadingAudio] = useState(false);
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [isPaused, setIsPaused] = useState(false);
+  const [sound, setSound] = useState();
+  const [loadingAudio, setLoadingAudio] = useState(false);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [isPaused, setIsPaused] = useState(false);
 
-  useEffect(() => {
-    loadStory();
-    return () => {
-      if (sound) {
-        sound.unloadAsync();
-      }
-    };
-  }, []);
+  useEffect(() => {
+    loadStory();
+    return () => {
+      if (sound) {
+        sound.unloadAsync();
+      }
+    };
+  }, []);
 
-  const loadStory = async () => {
-    try {
-      const storyData = await AsyncStorage.getItem("current_story");
-      if (storyData) {
-        setStory(JSON.parse(storyData));
-      } else {
-        // If no story in AsyncStorage, try to fetch from API
-        const token = await AsyncStorage.getItem("jwt_token");
-        const email = await AsyncStorage.getItem("user_email");
+  const loadStory = async () => {
+    try {
+      const storyData = await AsyncStorage.getItem("current_story");
+      console.log('Retrieved story data:', storyData); // Debug log
 
-        if (!token || !email) {
-          router.replace("/(tabs)/login");
-          return;
-        }
+      if (storyData) {
+        const parsedStory = JSON.parse(storyData);
+        console.log('Parsed story:', parsedStory); // Debug log
 
-        const response = await fetch(`${API_URL}/chatbot/get-story`, {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        });
+        // Validate the story data structure
+        if (!parsedStory.chapters || 
+            !parsedStory.chapters.chapter1 || 
+            !parsedStory.chapters.chapter2 || 
+            !parsedStory.chapters.chapter3) {
+          throw new Error("Invalid story format");
+        }
 
-        if (!response.ok) {
-          throw new Error("Failed to fetch story");
-        }
+        setStory(parsedStory);
+      } else {
+        throw new Error("No story data found");
+      }
+    } catch (error) {
+      console.error("Error loading story:", error);
+      
+      // Show more descriptive error to user
+      if (error.message === "Invalid story format") {
+        setError("Story data is incomplete or invalid. Please try generating the story again.");
+      } else if (error.message === "No story data found") {
+        setError("No story was found. Please generate a story first.");
+      } else {
+        setError("Failed to load story. Please try again.");
+      }
+      
+      // Log detailed error for debugging
+      console.log('Detailed error:', {
+        message: error.message,
+        stack: error.stack,
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
 
-        const data = await response.json();
-        setStory(data);
-        await AsyncStorage.setItem("current_story", JSON.stringify(data));
-      }
-    } catch (error) {
-      console.error("Error loading story:", error);
-      setError("Failed to load story. Please try again.");
-    } finally {
-      setLoading(false);
-    }
-  };
+  const getChapterContent = (chapterNumber) => {
+    if (!story || !story.chapters) return '';
+    
+    const chapter = story.chapters[`chapter${chapterNumber}`];
+    if (typeof chapter === 'object') {
+      // If it's an object, try to get the text content
+      return chapter.chapter_text || chapter.text || JSON.stringify(chapter);
+    }
+    // If it's a string, use it directly
+    return chapter || '';
+  };
 
   const readChapter = async () => {
     try {
@@ -160,46 +176,85 @@ export default function ReadScreen() {
   };
 
   if (loading) {
-    return (
-      <SafeAreaView style={styles.container}>
-        <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color="#007AFF" />
-          <Text style={styles.loadingText}>Loading your story...</Text>
-        </View>
-      </SafeAreaView>
-    );
-  }
+    return (
+      <SafeAreaView style={styles.container}>
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color="#007AFF" />
+          <Text style={styles.loadingText}>Loading your story...</Text>
+        </View>
+      </SafeAreaView>
+    );
+  }
 
-  if (error) {
-    return (
-      <SafeAreaView style={styles.container}>
-        <View style={styles.errorContainer}>
-          <MaterialIcons name="error-outline" size={48} color="#FF3B30" />
-          <Text style={styles.errorText}>{error}</Text>
-          <TouchableOpacity style={styles.retryButton} onPress={loadStory}>
-            <Text style={styles.retryButtonText}>Try Again</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.backButton} onPress={handleBack}>
-            <Text style={styles.backButtonText}>Go Back</Text>
-          </TouchableOpacity>
-        </View>
-      </SafeAreaView>
-    );
-  }
+  if (error) {
+    return (
+      <SafeAreaView style={styles.container}>
+        <View style={styles.errorContainer}>
+          <MaterialIcons name="error-outline" size={48} color="#FF3B30" />
+          <Text style={styles.errorText}>{error}</Text>
+          <TouchableOpacity style={styles.retryButton} onPress={loadStory}>
+            <Text style={styles.retryButtonText}>Try Again</Text>
+          </TouchableOpacity>
+          <TouchableOpacity 
+            style={styles.backButton} 
+            onPress={() => {
+              AsyncStorage.removeItem("current_story")
+                .then(() => router.back())
+                .catch(console.error);
+            }}
+          >
+            <Text style={styles.backButtonText}>Go Back</Text>
+          </TouchableOpacity>
+        </View>
+      </SafeAreaView>
+    );
+  }
 
-  if (!story) {
-    return (
-      <SafeAreaView style={styles.container}>
-        <View style={styles.errorContainer}>
-          <MaterialIcons name="book-off" size={48} color="#FF3B30" />
-          <Text style={styles.errorText}>No story found.</Text>
-          <TouchableOpacity style={styles.backButton} onPress={handleBack}>
-            <Text style={styles.backButtonText}>Go Back</Text>
-          </TouchableOpacity>
-        </View>
-      </SafeAreaView>
-    );
-  }
+  if (!story || !story.chapters || !Object.keys(story.chapters).length) {
+    return (
+      <SafeAreaView style={styles.container}>
+        <View style={styles.errorContainer}>
+          <MaterialIcons name="book-off" size={48} color="#FF3B30" />
+          <Text style={styles.errorText}>
+            Story data is invalid or missing. Please try generating a new story.
+          </Text>
+          <TouchableOpacity 
+            style={styles.backButton} 
+            onPress={() => {
+              AsyncStorage.removeItem("current_story")
+                .then(() => router.back())
+                .catch(console.error);
+            }}
+          >
+            <Text style={styles.backButtonText}>Go Back</Text>
+          </TouchableOpacity>
+        </View>
+      </SafeAreaView>
+    );
+  }
+
+  // Check if current chapter exists before rendering
+  const currentChapterText = story.chapters[`chapter${currentChapter}`];
+  if (!currentChapterText) {
+    return (
+      <SafeAreaView style={styles.container}>
+        <View style={styles.errorContainer}>
+          <MaterialIcons name="error-outline" size={48} color="#FF3B30" />
+          <Text style={styles.errorText}>Chapter data is missing. Please try generating the story again.</Text>
+          <TouchableOpacity 
+            style={styles.backButton} 
+            onPress={() => {
+              AsyncStorage.removeItem("current_story")
+                .then(() => router.back())
+                .catch(console.error);
+            }}
+          >
+            <Text style={styles.backButtonText}>Go Back</Text>
+          </TouchableOpacity>
+        </View>
+      </SafeAreaView>
+    );
+  }
 
   return (
     <>
@@ -245,43 +300,45 @@ export default function ReadScreen() {
         </View>
 
         <ScrollView
-          style={styles.contentContainer}
-          showsVerticalScrollIndicator={false}
-          contentContainerStyle={styles.contentPadding}
-        >
-          <Text style={styles.chapterTitle}>Chapter {currentChapter}</Text>
-          <View style={styles.buttonContainer}>
-            <TouchableOpacity
-              onPress={readChapter}
-              disabled={loadingAudio}
-              style={[styles.actionButton, loadingAudio && styles.disabledButton]}
-            >
-              {loadingAudio ? (
-                <ActivityIndicator size="small" color="#fff" />
-              ) : (
-                <Text style={styles.buttonText}>
-                  {isPaused ? "Restart" : isPlaying ? "Restart" : "Play"}
-                </Text>
-              )}
-            </TouchableOpacity>
-            {sound && (
-              <TouchableOpacity
-                onPress={pauseResumeChapter}
-                style={styles.actionButton}
-              >
-                <Text style={styles.buttonText}>{isPlaying ? "Pause" : "Resume"}</Text>
-              </TouchableOpacity>
-            )}
-          </View>
-          <Text style={styles.storyText}>
-            {story.chapters[`chapter${currentChapter}`]}
-          </Text>
-          {/* Add some bottom padding for better scrolling */}
-          <View style={styles.bottomPadding} />
-        </ScrollView>
-      </SafeAreaView>
-    </>
-  );
+          style={styles.contentContainer}
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={styles.contentPadding}
+        >
+          <Text style={styles.chapterTitle}>Chapter {currentChapter}</Text>
+          <View style={styles.buttonContainer}>
+            <TouchableOpacity
+              onPress={readChapter}
+              disabled={loadingAudio}
+              style={[styles.actionButton, loadingAudio && styles.disabledButton]}
+            >
+              {loadingAudio ? (
+                <ActivityIndicator size="small" color="#fff" />
+              ) : (
+                <Text style={styles.buttonText}>
+                  {isPaused ? "Restart" : isPlaying ? "Restart" : "Play"}
+                </Text>
+              )}
+            </TouchableOpacity>
+            {sound && (
+              <TouchableOpacity
+                onPress={pauseResumeChapter}
+                style={styles.actionButton}
+              >
+                <Text style={styles.buttonText}>
+                  {isPlaying ? "Pause" : "Resume"}
+                </Text>
+              </TouchableOpacity>
+            )}
+          </View>
+          {/* This is the updated chapter text rendering */}
+          <Text style={styles.storyText}>
+            {getChapterContent(currentChapter)}
+          </Text>
+          <View style={styles.bottomPadding} />
+        </ScrollView>
+      </SafeAreaView>
+    </>
+  );
 }
 
 const styles = {

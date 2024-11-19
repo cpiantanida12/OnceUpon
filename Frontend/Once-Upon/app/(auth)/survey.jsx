@@ -3,7 +3,7 @@ import { StyleSheet, View, Text, TouchableOpacity, Alert, ScrollView } from 'rea
 import { useRouter } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const API_URL = 'https://b353-35-202-168-65.ngrok-free.app';
+const API_URL = 'https://bb65-35-226-99-239.ngrok-free.app';
 
 const SurveyPage = () => {
   const [selectedThemes, setSelectedThemes] = useState([]);
@@ -11,10 +11,10 @@ const SurveyPage = () => {
   const router = useRouter();
 
   const themes = [
-    'Magic', 'Adventure', 'Superheroes', 'Animals', 'Fairy Tales', 
-    'Space', 'Pirates', 'Dinosaurs', 'Underwater', 'Friendship',
-    'Mystery', 'Time Travel', 'Treasure Hunt', 'Winter Wonderland', 
-    'Sports Heroes', 'Jungle Exploration', 'Robots', 'Mythology'
+    'Magic', 'Adventure', 'Superheroes', 'Self-Discovery', 'Animals', 'Fairy Tales', 
+    'Space', 'Problem-Solving', 'Family', 'Pirates', 'Dinosaurs', 'Underwater',
+    'Mystery', 'Time Travel', 'Teamwork', 'Treasure Hunt', 'Winter Wonderland', 
+    'Sports Heroes', 'Jungle Exploration', 'Friendship', 'Robots', 'Mythology'
   ];
 
   const hobbies = [

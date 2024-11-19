@@ -5,7 +5,7 @@ import { Link, useRouter } from 'expo-router';
 import { useUser } from '../../UserContext.jsx';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const API_URL = 'https://b353-35-202-168-65.ngrok-free.app';
+const API_URL = 'https://bb65-35-226-99-239.ngrok-free.app';
 
 const LoginPage = () => {
   const [email, setEmail] = useState('');
@@ -31,7 +31,6 @@ const LoginPage = () => {
           'Content-Type': 'application/json',
           'Accept': 'application/json',
         },
-        credentials: 'include',
         body: JSON.stringify({
           email: email,
           password: password,

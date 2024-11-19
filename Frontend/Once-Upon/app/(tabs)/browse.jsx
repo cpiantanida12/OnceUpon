@@ -8,8 +8,38 @@ import {
   Image,
   TouchableOpacity,
   Modal,
-  Button,
+  ActivityIndicator,
+  Dimensions,
+  Platform,
 } from "react-native";
+import { useRouter } from 'expo-router';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+const API_URL = 'https://bb65-35-226-99-239.ngrok-free.app';
+const { width } = Dimensions.get('window');
+
+const NotificationModal = ({ visible, message, onClose, type = 'info' }) => (
+  <Modal
+    animationType="fade"
+    transparent={true}
+    visible={visible}
+    onRequestClose={onClose}
+  >
+    <View style={styles.notificationModalContainer}>
+      <View style={styles.notificationModalContent}>
+        {type === 'loading' && (
+          <ActivityIndicator size="large" color="#007AFF" style={styles.notificationSpinner} />
+        )}
+        <Text style={styles.notificationText}>{message}</Text>
+        {type !== 'loading' && (
+          <TouchableOpacity style={styles.notificationButton} onPress={onClose}>
+            <Text style={styles.notificationButtonText}>OK</Text>
+          </TouchableOpacity>
+        )}
+      </View>
+    </View>
+  </Modal>
+);
 
 const genres = [
   "Teamwork",
@@ -19,11 +49,6 @@ const genres = [
   "Problem-Solving",
   "Family"
 ];
-
-import { useRouter } from 'expo-router';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-
-const API_URL = 'https://b353-35-202-168-65.ngrok-free.app';
 
 const books = [
   {
@@ -437,6 +462,12 @@ const BrowseScreen = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedBook, setSelectedBook] = useState(null);
   const [orderedGenres, setOrderedGenres] = useState(genres);
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [notification, setNotification] = useState({
+    visible: false,
+    message: '',
+    type: 'info' // 'info', 'error', or 'loading'
+  });
   const router = useRouter();
 
   useEffect(() => {
@@ -489,19 +520,103 @@ const BrowseScreen = () => {
     fetchUserPreferences(); // Call it once when component mounts
   }, []);
 
+  const showNotification = (message, type = 'info') => {
+    setNotification({
+      visible: true,
+      message,
+      type
+    });
+  };
+
+  const hideNotification = () => {
+    setNotification(prev => ({
+      ...prev,
+      visible: false
+    }));
+  };
+
+  const routeToStory = async () => {
+    try {
+      setModalVisible(false);
+      setIsGenerating(true);
+      showNotification('Generating your story. This may take a moment...', 'loading');
+
+      // Get authentication data
+      const token = await AsyncStorage.getItem('jwt_token');
+      const email = await AsyncStorage.getItem('user_email');
+
+      if (!token || !email) {
+        showNotification('Please log in to continue.', 'error');
+        setTimeout(() => {
+          hideNotification();
+          router.replace('/(auth)/login');
+        }, 2000);
+        return;
+      }
+
+      // First, start the story generation with the summary
+      const startResponse = await fetch(`${API_URL}/chatbot/message`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email: email,
+          message: selectedBook.summary
+        }),
+      });
+
+      if (!startResponse.ok) {
+        throw new Error('Failed to start story generation');
+      }
+
+      // Then immediately generate the full story
+      const generateResponse = await fetch(`${API_URL}/chatbot/generate-story`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email: email
+        }),
+      });
+
+      if (!generateResponse.ok) {
+        throw new Error('Failed to generate story');
+      }
+
+      const storyData = await generateResponse.json();
+      
+      // Store the generated story data
+      await AsyncStorage.setItem('current_story', JSON.stringify({
+        ...storyData,
+        title: selectedBook.title
+      }));
+
+      hideNotification();
+      // Navigate to read screen
+      router.push('/read');
+
+    } catch (error) {
+      console.error('Error generating story:', error);
+      showNotification('Failed to generate story. Please try again.', 'error');
+    } finally {
+      setIsGenerating(false);
+    }
+  };
+
   const handleImageClick = (book) => {
     setSelectedBook(book);
     setModalVisible(true);
   };
 
-  const routeToStory = () => {
-    setModalVisible(false);
-    router.push('/story?title=' + selectedBook.title + '&summary=' + selectedBook.summary)
-  };
-
   const handleCloseModal = () => {
-    setModalVisible(false);
-    setSelectedBook(null);
+    if (!isGenerating) {
+      setModalVisible(false);
+      setSelectedBook(null);
+    }
   };
 
 
@@ -530,7 +645,8 @@ const BrowseScreen = () => {
         </View>
       ))}
 
-{selectedBook && (
+      {/* Book Details Modal */}
+      {selectedBook && (
         <Modal
           animationType="slide"
           transparent={true}
@@ -539,19 +655,42 @@ const BrowseScreen = () => {
         >
           <View style={styles.modalContainer}>
             <View style={styles.modalContent}>
-              {/* Close button positioned at the top right */}
-              <TouchableOpacity onPress={handleCloseModal} style={styles.closeButton}>
+              <TouchableOpacity 
+                onPress={handleCloseModal} 
+                style={styles.closeButton}
+                disabled={isGenerating}
+              >
                 <Text style={styles.closeButtonText}>X</Text>
               </TouchableOpacity>
 
               <Text style={styles.modalTitle}>{selectedBook.title}</Text>
               <Text style={styles.modalTheme}>Theme: {selectedBook.theme}</Text>
               <Text style={styles.modalSummary}>{selectedBook.summary}</Text>
-              <Button title="Start Reading" onPress={routeToStory} />
+              
+              <TouchableOpacity 
+                style={[
+                  styles.startReadingButton,
+                  isGenerating && styles.disabledButton
+                ]}
+                onPress={routeToStory}
+                disabled={isGenerating}
+              >
+                <Text style={styles.startReadingButtonText}>
+                  {isGenerating ? 'Generating...' : 'Start Reading'}
+                </Text>
+              </TouchableOpacity>
             </View>
           </View>
         </Modal>
       )}
+
+      {/* Notification Modal */}
+      <NotificationModal 
+        visible={notification.visible}
+        message={notification.message}
+        type={notification.type}
+        onClose={hideNotification}
+      />
     </ScrollView>
   );
 };
@@ -560,6 +699,15 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 10,
+  },
+  loadingContainer: {
+    alignItems: 'center',
+    marginTop: 20,
+  },
+  loadingText: {
+    marginTop: 10,
+    fontSize: 16,
+    color: '#666',
   },
   genreSection: {
     marginBottom: 20,
@@ -631,6 +779,79 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "bold",
   },
+  notificationModalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    ...Platform.select({
+      web: {
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+      },
+    }),
+  },
+  notificationModalContent: {
+    backgroundColor: 'white',
+    borderRadius: 10,
+    padding: 20,
+    alignItems: 'center',
+    maxWidth: 300,
+    width: '90%',
+    ...Platform.select({
+      web: {
+        boxShadow: '0 2px 4px rgba(0, 0, 0, 0.2)',
+      },
+      default: {
+        elevation: 5,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.25,
+        shadowRadius: 3.84,
+      },
+    }),
+  },
+  notificationSpinner: {
+    marginBottom: 20,
+  },
+  notificationText: {
+    fontSize: 16,
+    textAlign: 'center',
+    marginBottom: 20,
+    color: '#333',
+  },
+  notificationButton: {
+    backgroundColor: '#007AFF',
+    paddingHorizontal: 30,
+    paddingVertical: 10,
+    borderRadius: 5,
+  },
+  notificationButtonText: {
+    color: 'white',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  disabledButton: {
+    backgroundColor: '#999',
+    opacity: 0.7,
+  },
+  startReadingButton: {
+    backgroundColor: '#007AFF',
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    borderRadius: 8,
+    marginTop: 20,
+    minWidth: 150,
+    alignItems: 'center',
+  },
+  startReadingButtonText: {
+    color: '#FFFFFF',
+    fontSize: 16,
+    fontWeight: 'bold',
+  }
 });
 
 export default BrowseScreen;

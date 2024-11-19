@@ -5,7 +5,7 @@ import { MaterialIcons } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const API_URL = 'https://b353-35-202-168-65.ngrok-free.app';
+const API_URL = 'https://bb65-35-226-99-239.ngrok-free.app';
 
 export default function BuildScreen() {
   const router = useRouter();
@@ -306,7 +306,7 @@ export default function BuildScreen() {
           disabled={loading || messages.length === 0}
         >
           <MaterialIcons name="refresh" size={24} color="white" />
-          <Text style={styles.clearButtonText}>Clear Chat</Text>
+          <Text style={styles.clearButtonText}>Clear</Text>
         </TouchableOpacity>
       </View>
 
