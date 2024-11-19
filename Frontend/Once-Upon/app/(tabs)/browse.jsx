@@ -462,6 +462,7 @@ const BrowseScreen = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedBook, setSelectedBook] = useState(null);
   const [orderedGenres, setOrderedGenres] = useState(genres);
+  const [userThemes, setUserThemes] = useState([]);
   const [isGenerating, setIsGenerating] = useState(false);
   const [notification, setNotification] = useState({
     visible: false,
@@ -480,10 +481,6 @@ const BrowseScreen = () => {
         }
     
         const token = await AsyncStorage.getItem('jwt_token');
-        console.log('Making request to:', `${API_URL}/browse/get-preferences`);
-        console.log('With email:', email);
-        console.log('Token exists:', !!token);
-    
         const response = await fetch(`${API_URL}/browse/get-preferences`, {
           method: 'POST',
           headers: {
@@ -493,21 +490,17 @@ const BrowseScreen = () => {
           body: JSON.stringify({ email })
         });
     
-        console.log('Response status:', response.status);
-        console.log('Response headers:', Object.fromEntries(response.headers.entries()));
-    
         const responseText = await response.text();
-        console.log('Raw response:', responseText);
     
         if (response.ok) {
           const data = JSON.parse(responseText);
-          console.log('Parsed data:', data);
-          const userThemes = data.themes;
+          const themes = data.themes;
+          setUserThemes(themes);
     
-          if (userThemes && userThemes.length > 0) {
+          if (themes && themes.length > 0) {
             const reorderedGenres = [
-              ...userThemes.filter(theme => genres.includes(theme)),
-              ...genres.filter(genre => !userThemes.includes(genre))
+              ...themes.filter(theme => genres.includes(theme)),
+              ...genres.filter(genre => !themes.includes(genre))
             ];
             setOrderedGenres(reorderedGenres);
           }
@@ -517,8 +510,32 @@ const BrowseScreen = () => {
       }
     };
 
-    fetchUserPreferences(); // Call it once when component mounts
+    fetchUserPreferences();
   }, []);
+
+  const getTopPicks = () => {
+    if (!userThemes.length) return [];
+    
+    // Number of books to select from each theme
+    const booksPerTheme = 3;
+    
+    // Get books for each user theme
+    const topPicks = userThemes.reduce((acc, theme) => {
+      // Get all books for this theme
+      const themeBooks = books.filter(book => book.theme === theme);
+      
+      // Shuffle the books for this theme
+      const shuffled = [...themeBooks].sort(() => 0.5 - Math.random());
+      
+      // Take up to 3 books from this theme (or fewer if not enough books exist)
+      const selectedBooks = shuffled.slice(0, booksPerTheme);
+      
+      return [...acc, ...selectedBooks];
+    }, []);
+    
+    // Shuffle the final collection to mix up books from different themes
+    return topPicks.sort(() => 0.5 - Math.random());
+  };
 
   const showNotification = (message, type = 'info') => {
     setNotification({
@@ -619,33 +636,47 @@ const BrowseScreen = () => {
     }
   };
 
+  const renderBookList = ({ data, title, style = {} }) => (
+    <View style={[styles.genreSection, style]}>
+      <Text style={styles.genreTitle}>{title}</Text>
+      <FlatList
+        horizontal
+        data={data}
+        renderItem={({ item }) => (
+          <TouchableOpacity onPress={() => handleImageClick(item)}>
+            <View style={styles.bookContainer}>
+              <Image
+                source={item.image}
+                style={styles.bookImage}
+                resizeMode="contain"
+              />
+            </View>
+          </TouchableOpacity>
+        )}
+        keyExtractor={(item) => item.id.toString()}
+        showsHorizontalScrollIndicator={false}
+      />
+    </View>
+  );
 
   return (
     <ScrollView style={styles.container}>
-      {orderedGenres.map((genre, index) => (
-        <View key={genre} style={styles.genreSection}>
-          <Text style={styles.genreTitle}>{genre}</Text>
-          <FlatList
-            horizontal
-            data={books.filter(book => book.theme === genre)}
-            renderItem={({ item }) => (
-              <TouchableOpacity onPress={() => handleImageClick(item)}>
-                <View style={styles.bookContainer}>
-                  <Image
-                    source={item.image}
-                    style={styles.bookImage}
-                    resizeMode="contain"
-                  />
-                </View>
-              </TouchableOpacity>
-            )}
-            keyExtractor={(item) => item.id.toString()}
-            showsHorizontalScrollIndicator={false}
-          />
-        </View>
+      {userThemes.length > 0 && (
+        renderBookList({
+          data: getTopPicks(),
+          title: "Top Picks for You",
+          style: styles.topPicksSection
+        })
+      )}
+
+      {orderedGenres.map((genre) => (
+        renderBookList({
+          key: genre,
+          data: books.filter(book => book.theme === genre),
+          title: genre
+        })
       ))}
 
-      {/* Book Details Modal */}
       {selectedBook && (
         <Modal
           animationType="slide"
@@ -711,6 +742,12 @@ const styles = StyleSheet.create({
   },
   genreSection: {
     marginBottom: 20,
+  },
+  topPicksSection: {
+    marginBottom: 30,
+    backgroundColor: '#f0f8ff',
+    padding: 10,
+    borderRadius: 10,
   },
   genreTitle: {
     fontSize: 24,
