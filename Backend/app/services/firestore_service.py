@@ -134,15 +134,17 @@ def clear_conversation(user_id: str) -> Dict[str, Any]:
         return {"error": f"Error clearing conversation: {str(e)}"}
 
 # Story Services
-def save_story(user_id: str, chapters: Dict[str, str], summary: str) -> Dict[str, Any]:
+def save_story(user_id: str, title: str, summary: str, chapters: Dict[str, str]) -> Dict[str, Any]:
     """Save completed story to Firestore"""
     try:
-        story_ref = db.collection('stories').document()
+        story_ref = db.collection('user_activity').document()
         story_ref.set({
             'user_id': user_id,
             'created_at': datetime.utcnow(),
+            'title': title,
+            'summary': summary,
             'chapters': chapters,
-            'summary': summary
+            'activity': 'generated_story'
         })
         return {"success": True, "story_id": story_ref.id}
     except Exception as e:
