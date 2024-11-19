@@ -102,10 +102,10 @@ export default function ReadScreen() {
       chapterText = chapter;
     }
 
-    // Remove lines starting with '##'
+    // Remove lines starting with '##' or "**"
     const filteredText = chapterText
       .split("\n") // Split text into lines
-      .filter((line) => !line.trim().startsWith("##")) // Exclude lines starting with '##'
+      .filter((line) => !(line.trim().startsWith("##") || line.trim().startsWith("**")))
       .join("\n"); // Join the lines back together
 
     return filteredText;
