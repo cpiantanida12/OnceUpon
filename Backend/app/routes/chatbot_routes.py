@@ -98,56 +98,65 @@ def generate_full_story():
         if user_id not in session_data or "summary" not in session_data[user_id]:
             return jsonify({"error": "No story summary found"}), 400
         
-        # Get final approved summary
         prev_summary = session_data[user_id]["summary"]
-        
-        # Get user age for appropriate content generation
-        user_age = get_user_age(user_id)
-        if user_age is None or user_age < 4:
-            user_age = 4
-        
-        generated_chapters = []
+        user_age = get_user_age(user_id) or 4
         
         try:
+            chapter_dict = {}
+            
             # Generate all three chapters
             for chapter_number in range(1, 4):
-                chapter = generate_chapter_api(user_id, chapter_number)
-                generated_chapters.append(chapter)
+                chapter_response = generate_chapter_api(user_id, chapter_number)
+                print(f"Chapter {chapter_number} response:", chapter_response)  # Debug log
+                
+                # Extract just the chapter_text from the response
+                if isinstance(chapter_response, dict):
+                    if "chapter_text" in chapter_response:
+                        # Store only the text content
+                        chapter_dict[f"chapter{chapter_number}"] = chapter_response["chapter_text"]
+                    else:
+                        raise ValueError(f"Chapter {chapter_number} response missing 'chapter_text' key")
+                else:
+                    chapter_dict[f"chapter{chapter_number}"] = str(chapter_response)
             
-            chapter_dict = {
-                f"chapter{i+1}": chapter 
-                for i, chapter in enumerate(generated_chapters)
-            }
+            # Extract title
+            title_match = re.search(r"##\s*Title\s*:\s*(.*?)\s*##", prev_summary, re.DOTALL | re.IGNORECASE)
+            title = title_match.group(1).strip() if title_match else "Untitled Story"
             
-            # Extract title from summary
-            title = re.search(r"##\s*Title\s*:\s*(.*?)\s*##", prev_summary, re.DOTALL | re.IGNORECASE)
-            extracted_title = title.group(1).strip() if title else "Untitled Story"
+            save_result = save_story(user_id, title, prev_summary, chapter_dict)
             
-            save_result = save_story(user_id, extracted_title, chapter_dict)
-            if isinstance(save_result, dict) and "error" in save_result:
-                return jsonify(save_result), 500
-            
-            # Clean up conversation state after successful story generation
+            # Clear session after successful save
             clear_session(user_id)
             
-            return jsonify({
+            # Prepare response with just the chapter text
+            response_data = {
                 "message": "Story generated successfully",
-                "story_id": save_result.get("story_id", ""),  # Ensure story_id is included
-                "title": extracted_title,
-                "chapters": {  # Frontend expects this exact structure
+                "story_id": save_result.get("story_id", ""),
+                "title": title,
+                "chapters": {
                     "chapter1": chapter_dict["chapter1"],
                     "chapter2": chapter_dict["chapter2"],
                     "chapter3": chapter_dict["chapter3"]
                 }
-            }), 200
+            }
+            
+            # Debug log the final structure
+            print("Final response structure:")
+            print(f"Keys: {response_data.keys()}")
+            print(f"Chapter1 type: {type(response_data['chapters']['chapter1'])}")
+            print(f"Chapter1 length: {len(response_data['chapters']['chapter1'])}")
+            
+            return jsonify(response_data), 200
             
         except Exception as e:
+            print(f"Error generating chapters: {str(e)}")
             return jsonify({
                 "error": "Error generating full story",
                 "details": str(e)
             }), 500
             
     except Exception as e:
+        print(f"Server error: {str(e)}")
         return jsonify({
             "error": "Server error",
             "details": str(e)
