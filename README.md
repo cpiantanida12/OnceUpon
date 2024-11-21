@@ -42,7 +42,7 @@ Once Upon uses AI to deliver custom stories based on children’s age and intere
 
 ### System Architecture
 
-- **[Story Generation Pipeline with Gemini 1.5-pro](https://github.com/cpiantanida12/OnceUpon/blob/master/Frontend/Once-Upon/app/story.jsx):** 
+- **[Story Generation Pipeline with Gemini 1.5-pro](Frontend/Once-Upon/app/read.jsx):** 
 The core of the Once Upon story generator is a multi-step pipeline that dynamically tailors stories based on user inputs. This pipeline involves three main stages: **summary generation, character extraction, and chapter-by-chapter story generation**. The process starts by using Vertex AI's Large Language Model (LLM), Gemini-1.5-pro, which is initialized with high output token limits to support extended storytelling. The LLM first creates a structured summary that includes an introductory hook and three chapter summaries, which is customized for the specified age group of the child.
 
   - Once the summary is generated, we employ a character extraction phase that identifies and describes key characters, adding depth and consistency to the narrative. This phase is supported by a custom prompt and **LangChain-supported LLMChain**, which extracts personalities and behaviors from the story to ensure continuity and enhance the personalization of subsequent chapters. For chapter development, each chapter is expanded based on its outline, with story progression rooted in the characters’ personalities and prior events. This method maintains a cohesive story arc, enriching the storytelling experience for young readers.
@@ -51,7 +51,7 @@ The user initiates the story by providing an age range and a story idea, which t
 - **[Personalized Recommendations](https://github.com/cpiantanida12/OnceUpon/blob/master/Frontend/Once-Upon/app/(tabs)/browse.jsx):** Age- and theme-based story recommendations via a simple onboarding questionnaire, making each story relevant and engaging.
 - **[UI Development in React Native](https://github.com/cpiantanida12/OnceUpon/tree/master/Frontend/Once-Upon):** Child-friendly, interactive UI for seamless navigation on iOS and Android.
 - **[Browse Story Page](https://github.com/cpiantanida12/OnceUpon/blob/master/Frontend/Once-Upon/app/(tabs)/browse.jsx):** Theme-organized story library with summaries and custom story creation, allowing creative control.
-- **[Text-to-Speech (TTS) Integration:](https://github.com/cpiantanida12/OnceUpon/blob/master/Frontend/Once-Upon/app/story.jsx)** Provides an immersive auditory experience using Google Cloud Text-to-Speech, a powerful service that converts text into natural-sounding speech, especially useful for non-readers.
+- **[Text-to-Speech (TTS) Integration:](Frontend/Once-Upon/app/read.jsx)** Provides an immersive auditory experience using Google Cloud Text-to-Speech, a powerful service that converts text into natural-sounding speech, especially useful for non-readers.
 - **[Backend and Data Storage](https://github.com/cpiantanida12/OnceUpon/tree/master/Backend):** Secure backend with minimal data collection, supporting real-time story customization.
 
 
