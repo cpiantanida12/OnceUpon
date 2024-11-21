@@ -53,17 +53,17 @@ def chatbot_message():
                 session_data[user_id]["summary"] = response_message
             
             # Format response for user
-            intro = re.search(r"##\s*Intro.*?:\s*(.*?)\s*##", response_message, re.DOTALL | re.IGNORECASE)
-            extract_intro = intro.group(1).strip() if intro else response_message
+            intro = re.search(r"##\s*(Intro|Introduction)\s*:\s*(.*?)(?=\s*##)", response_message, re.DOTALL | re.IGNORECASE)
+            extract_intro = intro.group(2).strip() if intro else response_message
                 
-            response_message_to_user = (
-                f"How does this story sound?:\n\n{extract_intro}\n\n"
-                "If you like it, press the 'Start Reading' button. "
-                "If not, let me know how I can make it better or press 'Clear' to start over!"
-            )
+            # response_message_to_user = (
+            #     f"How does this story sound?:\n\n{extract_intro}\n\n"
+            #     "If you like it, press the 'Start Reading' button. "
+            #     "If not, let me know how I can make it better or press 'Clear' to start over!"
+            # )
             
             return jsonify({
-                "response": response_message_to_user,
+                "response": extract_intro,
                 "has_story": True,
             }), 200
             

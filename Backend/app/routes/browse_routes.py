@@ -1,13 +1,31 @@
 from flask import Blueprint, request, jsonify
 from flask_jwt_extended import jwt_required
-#from app.services.firestore_service import get_browse
 
 bp = Blueprint('browse', __name__, url_prefix='/browse')
 
-# Get all browse (JWT required)
-@bp.route('/', methods=['GET'])
+@bp.route('/get-preferences', methods=['POST'])
 @jwt_required()
-def list_browse():
-    browse = get_browse()
-    return jsonify(browse), 200
-
+def get_preferences():
+    print("Get preferences route accessed")
+    try:
+        data = request.get_json()
+        email = data.get('email')
+        
+        if not email:
+            return jsonify({"error": "Email is required"}), 400
+        
+        user_doc = db.collection('users').document(email).get()
+        
+        if not user_doc.exists:
+            return jsonify({"error": "User not found"}), 404
+            
+        user_data = user_doc.to_dict()
+        themes = user_data.get('themes', [])
+        
+        return jsonify({
+            "themes": themes
+        }), 200
+        
+    except Exception as e:
+        logger.error(f"Error getting preferences: {str(e)}")
+        return jsonify({"error": str(e)}), 500

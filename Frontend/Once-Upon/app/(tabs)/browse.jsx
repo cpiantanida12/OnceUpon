@@ -15,7 +15,7 @@ import {
 import { useRouter } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const API_URL = 'https://bb65-35-226-99-239.ngrok-free.app';
+const API_URL = 'https://ab39-35-226-99-239.ngrok-free.app';
 const { width } = Dimensions.get('window');
 
 const NotificationModal = ({ visible, message, onClose, type = 'info' }) => (

@@ -24,12 +24,12 @@ summary_prompt_template = PromptTemplate(
     3. Chapter 2 summary (at least 100 words)
     4. Chapter 3 summary (at least 100 words)
     Format your response as follows:
-    Story Introduction: [Your introduction here]
-    Chapter 1: [Title]
+    ##Introduction: [Your introduction here]
+    ##Chapter 1: [Title]
     [Chapter 1 summary]
-    Chapter 2: [Title]
+    ##Chapter 2: [Title]
     [Chapter 2 summary]
-    Chapter 3: [Title]
+    ##Chapter 3: [Title]
     [Chapter 3 summary]
     Ensure each chapter summary is complete and shows a clear progression of the story.
     """

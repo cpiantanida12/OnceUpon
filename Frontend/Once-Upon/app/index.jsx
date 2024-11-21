@@ -8,15 +8,20 @@ export default function Index() {
   const { userEmail } = useUser();
   const [showSplash, setShowSplash] = useState(true);
 
-  useEffect(() => {
-    const splashTimer = setTimeout(() => {
-      setShowSplash(false);
-      if (userEmail) {
-        router.replace('/(tabs)/browse');
-      } else {
+  // useEffect(() => {
+  //   const splashTimer = setTimeout(() => {
+  //     setShowSplash(false);
+  //     if (userEmail) {
+  //       router.replace('/(tabs)/browse');
+  //     } else {
+  //       router.replace('/(auth)/landing');
+  //     }
+  //   }, 3000);
+    useEffect(() => {
+      const splashTimer = setTimeout(() => {
+        setShowSplash(false);
         router.replace('/(auth)/landing');
-      }
-    }, 3000);
+      }, 3000);
 
     return () => clearTimeout(splashTimer);
   }, [userEmail]);

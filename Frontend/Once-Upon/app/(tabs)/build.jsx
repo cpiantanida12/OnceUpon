@@ -5,7 +5,7 @@ import { MaterialIcons } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const API_URL = 'https://bb65-35-226-99-239.ngrok-free.app';
+const API_URL = 'https://ab39-35-226-99-239.ngrok-free.app';
 
 export default function BuildScreen() {
   const router = useRouter();
@@ -15,38 +15,33 @@ export default function BuildScreen() {
   const [hasStory, setHasStory] = useState(false);
   const flatListRef = useRef(null);
 
-  // Debug function to log auth data
-  const logAuthData = async () => {
-    try {
-      const token = await AsyncStorage.getItem('jwt_token');
-      const email = await AsyncStorage.getItem('user_email');
-
-      if (token) {
-        // Check token expiration
-        const tokenParts = token.split('.');
-        if (tokenParts.length === 3) {
-          const payload = JSON.parse(atob(tokenParts[1]));
-          const expiration = new Date(payload.exp * 1000);
-          const now = new Date();
-          
-          if (now > expiration) {
-            // Token is expired, clear storage and redirect to login
-            console.log('Token expired, redirecting to login');
-            await AsyncStorage.multiRemove(['jwt_token', 'user_email']);
-            router.replace('/(auth)/login');
-            return false;
+  useEffect(() => {
+    const addWelcomeMessages = async () => {
+      try {
+        const email = await AsyncStorage.getItem('user_email');
+        const welcomeMessages = [
+          {
+            type: 'bot',
+            content: `Welcome to the Story Builder! 📚✨`
+          },
+          {
+            type: 'bot',
+            content: `I'm excited to help you create a unique story. Just tell me what kind of story you'd like to read about - it could be anything from space adventures to magical forests, brave heroes to mysterious mysteries!`
+          },
+          {
+            type: 'bot',
+            content: `What would you like to read about today?`
           }
-        }
+        ];
+        
+        setMessages(welcomeMessages);
+      } catch (error) {
+        console.error('Error setting welcome message:', error);
       }
+    };
 
-      console.log('Auth Data:', {
-        token: token ? 'exists' : 'missing',
-        email: email,
-      });
-    } catch (error) {
-      console.error('Error logging auth data:', error);
-    }
-  };
+    addWelcomeMessages();
+  }, []);
 
   const handleSend = async () => {
     if (!inputText.trim() || loading) {
@@ -144,8 +139,12 @@ export default function BuildScreen() {
       }
   
       // Add bot response to chat
+      const preBotMessage = {type: 'bot', content: "How does this story sound?"}
+      const postBotMessage = {type: 'bot', content: "If you like how your story sounds, press the 'Start Reading' button. Otherwise, let me know how I can make it better or press 'Clear' to start over!"}
       const botMessage = { type: 'bot', content: data.response };
+      setMessages(prev => [...prev, preBotMessage]);
       setMessages(prev => [...prev, botMessage]);
+      setMessages(prev => [...prev, postBotMessage]);
       setHasStory(data.has_story);
   
     } catch (error) {
