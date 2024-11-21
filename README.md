@@ -19,10 +19,11 @@
 1. [Project Motivation](#project-motivation)
 2. [App Overview](#app-overview)
 3. [System Architecture](#system-architecture)
-4. [Methodology](#methodology)
-5. [Results and Discussion](#results-and-discussion)
-6. [Conclusion and Future Work](#conclusion-and-future-work)
-7. [Contact Information](#contact-information)
+4. [What Makes OnceUpon Stand Out?](#what-makes-onceupon-stand-out)
+5. [Methodology](#methodology)
+6. [Results and Discussion](#results-and-discussion)
+7. [Conclusion and Future Work](#conclusion-and-future-work)
+8. [Contact Information](#contact-information)
 
 ---
 
@@ -47,11 +48,17 @@ The core of the Once Upon story generator is a multi-step pipeline that dynamica
   - Once the summary is generated, we employ a character extraction phase that identifies and describes key characters, adding depth and consistency to the narrative. This phase is supported by a custom prompt and **LangChain-supported LLMChain**, which extracts personalities and behaviors from the story to ensure continuity and enhance the personalization of subsequent chapters. For chapter development, each chapter is expanded based on its outline, with story progression rooted in the characters’ personalities and prior events. This method maintains a cohesive story arc, enriching the storytelling experience for young readers.
 - **Interactive Flow:**
 The user initiates the story by providing an age range and a story idea, which triggers a series of automated prompts and responses. A **conversational loop** is embedded, allowing users to refine summaries or request a new story, making the experience interactive. **This modular flow is achieved through LLMChain instances for each prompt type (summary, chapter, character extraction) and a final summarization step for a streamlined summary of each generated chapter**. This flexible, prompt-based architecture allows for continuous improvements and fine-tuning based on new ideas or desired variations.
-- **Personalized Recommendations:** Age- and theme-based story recommendations via a simple onboarding questionnaire, making each story relevant and engaging.
+- **[Personalized Recommendations](https://github.com/cpiantanida12/OnceUpon/blob/master/Frontend/Once-Upon/app/(tabs)/browse.jsx):** Age- and theme-based story recommendations via a simple onboarding questionnaire, making each story relevant and engaging.
 - **[UI Development in React Native](https://github.com/cpiantanida12/OnceUpon/tree/master/Frontend/Once-Upon):** Child-friendly, interactive UI for seamless navigation on iOS and Android.
 - **[Browse Story Page](https://github.com/cpiantanida12/OnceUpon/blob/master/Frontend/Once-Upon/app/(tabs)/browse.jsx):** Theme-organized story library with summaries and custom story creation, allowing creative control.
-- **Text-to-Speech (TTS) Integration:** Provides an immersive auditory experience using Expo Speech, a JavaScript library, especially useful for non-readers.
+- **[Text-to-Speech (TTS) Integration:](https://github.com/cpiantanida12/OnceUpon/blob/master/Frontend/Once-Upon/app/story.jsx)** Provides an immersive auditory experience using Google Cloud Text-to-Speech, a powerful service that converts text into natural-sounding speech, especially useful for non-readers.
 - **[Backend and Data Storage](https://github.com/cpiantanida12/OnceUpon/tree/master/Backend):** Secure backend with minimal data collection, supporting real-time story customization.
+
+
+<p align="center">
+<img width="1050" alt="Screenshot 2024-11-21 at 4 09 44 PM" src="https://github.com/user-attachments/assets/5b1fc575-7a92-4ebd-856d-ff418212cd1c">
+</p>
+
 
 ---
 
@@ -83,7 +90,7 @@ Managing narrative cohesion in lengthy stories is a well-known challenge for LLM
   - Finally, each chapter is generated sequentially using the chapter generation pipeline. Here, Gemini-1.0-pro creates detailed, age-appropriate text, following the defined structure and adding narrative richness. To control token limits, each chapter is written to a specific length, maintaining the pacing and flow of the story. The integration of character details within each chapter enhances the story’s depth, making Once Upon’s stories feel uniquely crafted for each child.
 3. **[Pregenerated Libraries](https://github.com/cpiantanida12/OnceUpon/blob/master/Frontend/Once-Upon/app/(tabs)/browse.jsx):** 
   - Pre-generated stories offer modifiable summaries, encouraging creativity and engagement.
-4. **Text-to-Speech Implementation:** 
+4. **[Text-to-Speech Implementation:](https://github.com/cpiantanida12/OnceUpon/blob/master/Frontend/Once-Upon/app/story.jsx)** 
   - TTS allows children to listen along, enhancing accessibility and literacy.
 
 ---
@@ -110,7 +117,7 @@ Managing narrative cohesion in lengthy stories is a well-known challenge for LLM
 
 **Findings**: Once Upon effectively combines AI personalization to create age-appropriate, captivating stories. TTS broadens accessibility, making stories enjoyable for all ages.
 
-**Future Enhancements**: Planned upgrades include additional themes, cultural diversity, multiple language options, and improved content moderation to enhance the storytelling experience.
+**Future Enhancements**: Planned upgrades include additional themes, voice cloning integration, games, cultural diversity, multiple language options, longer story generation, and improved content moderation to enhance the storytelling experience.
 
 ---
 
