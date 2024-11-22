@@ -56,11 +56,15 @@ The user initiates the story by providing an age range and a story idea, which t
 - **[Text-to-Speech (TTS) Integration:](Frontend/Once-Upon/app/read.jsx)** Provides an immersive auditory experience using Google Cloud Text-to-Speech, a powerful service that converts text into natural-sounding speech, especially useful for non-readers.
 - **[Backend and Data Storage](https://github.com/cpiantanida12/OnceUpon/tree/master/Backend):** Secure backend with minimal data collection, supporting real-time story customization.
 
+---
+
 ### Data Pipeline
 
 <p align="center">
 <img width="1050" alt="Screenshot 2024-11-21 at 4 09 44 PM" src="https://github.com/user-attachments/assets/5b1fc575-7a92-4ebd-856d-ff418212cd1c">
 </p>
+
+---
 
 ### Story Generation Flow
 <p align="center">
