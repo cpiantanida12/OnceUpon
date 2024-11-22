@@ -64,7 +64,7 @@ The user initiates the story by providing an age range and a story idea, which t
 
 ### Story Generation Flow
 <p align="center">
-  <img width="1293" alt="Screenshot 2024-11-21 at 11 27 30 PM" src="https://github.com/user-attachments/assets/ee518024-c1a3-435c-be05-80ee9bb708a5">
+<img width="1289" alt="Screenshot 2024-11-21 at 11 33 13 PM" src="https://github.com/user-attachments/assets/12d04a93-429d-4e8a-a9a4-0f3ac8490b7e">
 </p>
 
 ---
