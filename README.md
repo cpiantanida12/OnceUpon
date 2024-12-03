@@ -65,6 +65,24 @@ The user initiates the story by providing an age range and a story idea, which t
 </p>
 
 ---
+### Tech Stack Used:
+
+**Front-End:**
+Developed using React.js for an intuitive and engaging user interface, providing a seamless user experience. Real-time interactions ensure that users can dynamically create and edit stories.
+
+**Back-End:**
+Built with Flask and Python, the backend efficiently handles API requests, processes AI logic, and interacts with databases. It facilitates smooth communication between user requests and the AI models.
+
+**Database:**
+Firestore serves as the database to store user interactions, story history, and preferences. This data is critical for maintaining user sessions and building personalized recommendations.
+
+**AI Integration:**
+The pipeline integrates advanced AI models, including Google's Vertex AI, Gemini 1.5-flash, and OpenAI's DALL·E, to power storytelling with dynamic visuals and personalized narratives. These models adapt to user preferences and provide rich, engaging story experiences.
+
+**Deployment:**
+Deployed on Google Cloud Run, ensuring scalability, high availability, and cost-effective operations. This architecture supports a wide range of concurrent users and provides a reliable platform for real-time storytelling.
+
+---
 
 ### Story Generation Flow
 <p align="center">
