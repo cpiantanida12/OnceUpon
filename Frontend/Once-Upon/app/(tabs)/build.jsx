@@ -5,7 +5,7 @@ import { MaterialIcons } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const API_URL = 'https://ab39-35-226-99-239.ngrok-free.app';
+const API_URL = 'https://f9bf-34-71-69-121.ngrok-free.app';
 
 export default function BuildScreen() {
   const router = useRouter();

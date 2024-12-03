@@ -15,7 +15,7 @@ import {
 import { useRouter } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const API_URL = 'https://ab39-35-226-99-239.ngrok-free.app';
+const API_URL = 'https://f9bf-34-71-69-121.ngrok-free.app';
 const { width } = Dimensions.get('window');
 
 const NotificationModal = ({ visible, message, onClose, type = 'info' }) => (
@@ -467,7 +467,7 @@ const BrowseScreen = () => {
   const [notification, setNotification] = useState({
     visible: false,
     message: '',
-    type: 'info' // 'info', 'error', or 'loading'
+    type: 'info'
   });
   const router = useRouter();
 
@@ -475,12 +475,16 @@ const BrowseScreen = () => {
     const fetchUserPreferences = async () => {
       try {
         const email = await AsyncStorage.getItem('user_email');
+        console.log('Fetching preferences for email:', email);
+    
         if (!email) {
-          console.log('No user email found');
+          console.log('No user email found in AsyncStorage');
           return;
         }
     
         const token = await AsyncStorage.getItem('jwt_token');
+        console.log('Token retrieved:', token ? 'Yes' : 'No');
+    
         const response = await fetch(`${API_URL}/browse/get-preferences`, {
           method: 'POST',
           headers: {
@@ -490,20 +494,31 @@ const BrowseScreen = () => {
           body: JSON.stringify({ email })
         });
     
+        console.log('API Response status:', response.status);
         const responseText = await response.text();
+        console.log('API Response text:', responseText);
     
         if (response.ok) {
           const data = JSON.parse(responseText);
+          console.log('Parsed data:', data);
           const themes = data.themes;
-          setUserThemes(themes);
+          console.log('Retrieved themes:', themes);
     
           if (themes && themes.length > 0) {
+            setUserThemes(themes);
+            console.log('Set user themes to:', themes);
+    
             const reorderedGenres = [
               ...themes.filter(theme => genres.includes(theme)),
               ...genres.filter(genre => !themes.includes(genre))
             ];
+            console.log('Reordered genres:', reorderedGenres);
             setOrderedGenres(reorderedGenres);
+          } else {
+            console.log('No themes found in response');
           }
+        } else {
+          console.error('API request failed:', response.status, responseText);
         }
       } catch (error) {
         console.error('Error fetching user preferences:', error);
@@ -514,26 +529,25 @@ const BrowseScreen = () => {
   }, []);
 
   const getTopPicks = () => {
-    if (!userThemes.length) return [];
+    console.log('Getting top picks. User themes:', userThemes);  // Debug log
     
-    // Number of books to select from each theme
-    const booksPerTheme = 3;
+    if (!userThemes?.length) {
+      console.log('No user themes available');  // Debug log
+      return [];
+    }
     
-    // Get books for each user theme
+    const booksPerTheme = 6;
+    
     const topPicks = userThemes.reduce((acc, theme) => {
-      // Get all books for this theme
       const themeBooks = books.filter(book => book.theme === theme);
+      console.log(`Found ${themeBooks.length} books for theme ${theme}`);  // Debug log
       
-      // Shuffle the books for this theme
       const shuffled = [...themeBooks].sort(() => 0.5 - Math.random());
-      
-      // Take up to 3 books from this theme (or fewer if not enough books exist)
       const selectedBooks = shuffled.slice(0, booksPerTheme);
       
       return [...acc, ...selectedBooks];
     }, []);
     
-    // Shuffle the final collection to mix up books from different themes
     return topPicks.sort(() => 0.5 - Math.random());
   };
 
@@ -571,7 +585,6 @@ const BrowseScreen = () => {
         return;
       }
 
-      // First, start the story generation with the summary
       const startResponse = await fetch(`${API_URL}/chatbot/message`, {
         method: 'POST',
         headers: {
@@ -670,11 +683,26 @@ const BrowseScreen = () => {
       )}
 
       {orderedGenres.map((genre) => (
-        renderBookList({
-          key: genre,
-          data: books.filter(book => book.theme === genre),
-          title: genre
-        })
+        <View key={genre} style={styles.genreSection}>
+          <Text style={styles.genreTitle}>{genre}</Text>
+          <FlatList
+            horizontal
+            data={books.filter(book => book.theme === genre)}
+            renderItem={({ item }) => (
+              <TouchableOpacity onPress={() => handleImageClick(item)}>
+                <View style={styles.bookContainer}>
+                  <Image
+                    source={item.image}
+                    style={styles.bookImage}
+                    resizeMode="contain"
+                  />
+                </View>
+              </TouchableOpacity>
+            )}
+            keyExtractor={(item) => item.id.toString()}
+            showsHorizontalScrollIndicator={false}
+          />
+        </View>
       ))}
 
       {selectedBook && (
