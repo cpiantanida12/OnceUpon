@@ -1,5 +1,6 @@
 from flask import Blueprint, request, jsonify
 from flask_jwt_extended import jwt_required
+from app.services.firestore_service import db
 
 bp = Blueprint('browse', __name__, url_prefix='/browse')
 
@@ -27,5 +28,4 @@ def get_preferences():
         }), 200
         
     except Exception as e:
-        logger.error(f"Error getting preferences: {str(e)}")
         return jsonify({"error": str(e)}), 500
