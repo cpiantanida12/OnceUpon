@@ -20,12 +20,13 @@
 2. [App Overview](#app-overview)
 3. [System Architecture](#system-architecture)
 4. [Data Pipeline](#data-pipeline)
-5. [Story Generation Flow](#story-generation-flow)
-6. [What Makes OnceUpon Stand Out?](#what-makes-onceupon-stand-out)
-7. [Methodology](#methodology)
-8. [Results and Discussion](#results-and-discussion)
-9. [Conclusion and Future Work](#conclusion-and-future-work)
-10. [Contact Information](#contact-information)
+5. [Tech Stack Used](#tech-stack-used)
+6. [Story Generation Flow](#story-generation-flow)
+7. [What Makes OnceUpon Stand Out?](#what-makes-onceupon-stand-out)
+8. [Methodology](#methodology)
+9. [Results and Discussion](#results-and-discussion)
+10. [Conclusion and Future Work](#conclusion-and-future-work)
+11. [Contact Information](#contact-information)
 
 ---
 
@@ -66,7 +67,7 @@ The user initiates the story by providing a story idea, which triggers a series 
 </p>
 
 ---
-### Tech Stack Used:
+### Tech Stack Used
 
 **Front-End:**
 Developed using React.js for an intuitive and engaging user interface, providing a seamless user experience. Real-time interactions ensure that users can dynamically create and edit stories.
