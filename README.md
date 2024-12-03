@@ -153,6 +153,6 @@ Managing narrative cohesion in lengthy stories is a well-known challenge for LLM
 ### Contact Information
 
 - **Hima Cheruvu:** hima@uchicago.edu  
-- **Nia Ganger:** niagangar@uchicago.edu  
+- **Nia Gangar:** niagangar@uchicago.edu  
 - **Christian Piantanida:** cpiantanida@uchicago.edu  
 - **Rishika Ravindran:** rrishika@uchicago.edu  
