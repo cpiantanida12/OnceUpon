@@ -147,7 +147,7 @@ Managing narrative cohesion in lengthy stories is a well-known challenge for LLM
 
 **Findings**: Once Upon effectively combines AI personalization to create age-appropriate, captivating stories. TTS broadens accessibility, making stories enjoyable for all ages.
 
-**Future Enhancements**: Planned upgrades include additional themes, voice cloning integration, games, cultural diversity, multiple language options, longer story generation, and improved content moderation to enhance the storytelling experience.
+**Future Enhancements**: Planned upgrades include additional themes, Gaurdian (Parent) Mode and Explorer (Child) Mode, voice cloning integration, games, cultural diversity, multiple language options, longer story generation, number out chapters outputted based on child's reading abilities, display generated images during storytelling, and improved content moderation to enhance the storytelling experience.
 
 ---
 
