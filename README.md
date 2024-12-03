@@ -1,6 +1,6 @@
 # Once Upon: The Children’s Story Generation App
 
-**Authors:** Hima Cheruvu, Nia Ganger, Christian Piantanida, Rishika Ravindran  
+**Authors:** Hima Cheruvu, Nia Gangar, Christian Piantanida, Rishika Ravindran  
 **Institution:** Applied Data Science Program, University of Chicago
 
 **Academic Paper:** [Link to Paper](https://docs.google.com/document/d/1hXPNcPH6-LUzYTw7pF7fpnhOF5rucWVO7um2F3gctRs/edit?usp=sharing)
