@@ -124,6 +124,10 @@ Managing narrative cohesion in lengthy stories is a well-known challenge for LLM
 4. **[Text-to-Speech Implementation:](https://github.com/cpiantanida12/OnceUpon/blob/master/Frontend/Once-Upon/app/story.jsx)** 
   - TTS allows children to listen along, enhancing accessibility and literacy.
 
+<p align="center">
+<img width="822" alt="Screenshot 2024-12-03 at 3 26 28 PM" src="https://github.com/user-attachments/assets/0799165c-3fac-4664-913d-0f41281c5878">
+</p>
+
 ---
 
 ### Results and Discussion
