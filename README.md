@@ -77,7 +77,7 @@ Built with Flask and Python, the backend efficiently handles API requests, proce
 Firestore serves as the database to store user interactions, story history, and preferences. This data is critical for maintaining user sessions and building personalized recommendations.
 
 **AI Integration:**
-The pipeline integrates advanced AI models, including Google's Vertex AI, Gemini 1.5-flash, and OpenAI's DALL·E, to power storytelling with dynamic visuals and personalized narratives. These models adapt to user preferences and provide rich, engaging story experiences.
+The pipeline integrates advanced AI models, including Google's Vertex AI, Gemini 1.5 Pro, and OpenAI's DALL·E, to power storytelling with dynamic visuals and personalized narratives. These models adapt to user preferences and provide rich, engaging story experiences.
 
 **Deployment:**
 Deployed on Google Cloud Run, ensuring scalability, high availability, and cost-effective operations. This architecture supports a wide range of concurrent users and provides a reliable platform for real-time storytelling.
