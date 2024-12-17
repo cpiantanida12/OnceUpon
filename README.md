@@ -3,10 +3,19 @@
 **Authors:** Hima Cheruvu, Nia Gangar, Christian Piantanida, Rishika Ravindran  
 **Institution:** Applied Data Science Program, University of Chicago
 
+**Demo:** [Link to Demo](https://docs.google.com/document/d/1hXPNcPH6-LUzYTw7pF7fpnhOF5rucWVO7um2F3gctRs/edit?usp=sharing](https://drive.google.com/file/d/1vas3zjByW-XM6-QMLc-g5KkILYxMFDv0/view?usp=sharing))
+
+
 **Academic Paper:** [Link to Paper](https://docs.google.com/document/d/1hXPNcPH6-LUzYTw7pF7fpnhOF5rucWVO7um2F3gctRs/edit?usp=sharing)
 
 <p align="center">
   <img width="578" alt="Once Upon Logo with Slogan" src="https://github.com/user-attachments/assets/add556ee-99ab-4c2d-80b5-5b5cdb9ce375">
+</p>
+
+## Best in Show Recognition
+
+<p align="center">
+<img width="598" alt="Screenshot 2024-12-16 at 11 22 52 PM" src="https://github.com/user-attachments/assets/e9a6ce79-e6c4-4f8a-b78a-646cffe86d89" />
 </p>
 
 ## Abstract
