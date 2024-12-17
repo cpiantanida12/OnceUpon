@@ -3,7 +3,7 @@
 **Authors:** Hima Cheruvu, Nia Gangar, Christian Piantanida, Rishika Ravindran  
 **Institution:** Applied Data Science Program, University of Chicago
 
-**Demo:** [Link to Demo](https://docs.google.com/document/d/1hXPNcPH6-LUzYTw7pF7fpnhOF5rucWVO7um2F3gctRs/edit?usp=sharing](https://drive.google.com/file/d/1vas3zjByW-XM6-QMLc-g5KkILYxMFDv0/view?usp=sharing))
+**Demo:** [Link to Demo](https://drive.google.com/file/d/1vas3zjByW-XM6-QMLc-g5KkILYxMFDv0/view?usp=sharing)
 
 
 **Academic Paper:** [Link to Paper](https://docs.google.com/document/d/1hXPNcPH6-LUzYTw7pF7fpnhOF5rucWVO7um2F3gctRs/edit?usp=sharing)
